@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "193039578463",
+    "firebase_url": "https://sobhi-mohammad.firebaseio.com",
+    "project_id": "sobhi-mohammad",
+    "storage_bucket": "sobhi-mohammad.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:193039578463:android:01d3ed077951ed5c",
+        "android_client_info": {
+          "package_name": "com.kayali_developer.sobhimohammad"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "193039578463-n8159b7neou6vv2cpj2lithon8agnr2r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kayali_developer.sobhimohammad",
+            "certificate_hash": "5b5333d20b231acea999080a41b5e17f8a419625"
+          }
+        },
+        {
+          "client_id": "193039578463-168ivhvq67di7takntagna52nuot2mlf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAV4xuzsFHMAZ4s_QSnAM5b8CF6uvFuMSk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "193039578463-168ivhvq67di7takntagna52nuot2mlf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

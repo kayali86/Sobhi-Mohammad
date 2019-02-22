@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_new_videos"
+            android:icon="@drawable/ic_new_icon"
+            android:title="New Videos" />
+        <item
+            android:id="@+id/nav_play_lists"
+            android:icon="@drawable/ic_playlist"
+            android:title="Play Lists" />
+        <item
+            android:id="@+id/nav_favorites_videos"
+            android:icon="@drawable/ic_favorites_videos_list"
+            android:title="Favorites Videos" />
+
+        <item
+            android:id="@+id/nav_change_theme"
+            android:icon="@drawable/ic_color_lens"
+            android:title="Theme" />
+
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_settings"
+            android:title="Settings" />
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_privacy_policy"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Privacy Policy" />
+
+            <item
+                android:id="@+id/nav_home_page"
+                android:icon="@drawable/ic_web"
+                android:title="Homepage" />
+
+            <item
+                android:id="@+id/nav_rate_app"
+                android:icon="@drawable/ic_star"
+                android:title="Rate App" />
+
+            <item
+                android:id="@+id/nav_share_app"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Share App" />
+
+            <item
+                android:id="@+id/nav_about_us"
+                android:icon="@drawable/ic_info"
+                android:title="About Us" />
+
+        </menu>
+    </item>
+
+</menu>

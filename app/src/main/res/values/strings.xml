@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">Sobhi Mohammad</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Sobhi Mohammad</string>
+    <string name="nav_header_subtitle">www.sobhimohammad.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+
+    <string name="cannot_load_play_lists">Cannot load Play Lists!</string>
+    <string name="loading">Loading..</string>
+
+    <string name="published_at">Published at:</string>
+
+
+    <string name="default_notification_channel_id">Sobhi Mohammad</string>
+
+    <string name="title_fragment_new_videos">New</string>
+    <string name="title_fragment_favorites_videos">Favorites</string>
+    <string name="title_fragment_play_lists">Play Lists</string>
+</resources>

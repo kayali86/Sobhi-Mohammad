@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="@color/backgroundColor"
+    android:elevation="@dimen/normal_elevation"
+    android:layout_marginBottom="@dimen/normal_margin"
+    android:layout_marginStart="@dimen/normal_margin"
+    android:layout_marginEnd="@dimen/normal_margin"
+    android:id="@+id/item_play_list"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/iv_thumbnail_playlist"
+        android:layout_width="match_parent"
+        android:layout_height="192dp" />
+
+    <TextView
+        android:padding="@dimen/small_margin"
+        android:textColor="@color/lightTextColor"
+        android:layout_gravity="bottom"
+        android:background="@color/colorPrimaryDark"
+        android:id="@+id/tv_play_list_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>
