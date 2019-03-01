@@ -1,5 +1,6 @@
 package com.kayali_developer.sobhimohammad.main;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,13 @@ public class PrivacyPolicyFragment extends Fragment {
     public static final String TAG = "PrivacyPolicyFragmentTag";
 
     private Unbinder unbinder;
+
+    private PrivacyPolicyFragmentListener fragmentListener;
+
+    interface PrivacyPolicyFragmentListener{
+        void onPrivacyPolicyFragmentAttached();
+        void onPrivacyPolicyFragmentDetached();
+    }
 
     public PrivacyPolicyFragment() {
     }
@@ -39,5 +47,18 @@ public class PrivacyPolicyFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        fragmentListener = ((PrivacyPolicyFragmentListener) context);
+        fragmentListener.onPrivacyPolicyFragmentAttached();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        fragmentListener.onPrivacyPolicyFragmentDetached();
     }
 }

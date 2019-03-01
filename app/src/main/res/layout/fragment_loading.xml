@@ -2,18 +2,26 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:gravity="center"
+    android:background="@color/loaderBackgroundColor"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <ProgressBar
+        android:indeterminateDrawable="@drawable/progress_animation"
         android:layout_gravity="center"
-        android:layout_width="128dp"
-        android:layout_height="128dp" />
+        android:layout_width="56dp"
+        android:layout_height="56dp" />
 
     <TextView
+        android:layout_gravity="center_horizontal"
+        android:textSize="@dimen/title_text_size"
+        android:textAllCaps="true"
+        android:textStyle="bold"
+        android:layout_marginTop="@dimen/small_margin"
+        android:textColor="@color/colorPrimary"
         android:id="@+id/tv_loading_message"
         android:textAlignment="center"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
 </LinearLayout>

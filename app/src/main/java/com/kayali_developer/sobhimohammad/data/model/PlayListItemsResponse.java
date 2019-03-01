@@ -77,7 +77,8 @@ public class PlayListItemsResponse {
 
     @Entity(tableName = "videos")
     public static class Item {
-
+        @SerializedName("selected")
+        private boolean selected;
         @SerializedName("kind")
         private String kind;
         @SerializedName("etag")
@@ -88,6 +89,14 @@ public class PlayListItemsResponse {
         private String id;
         @SerializedName("snippet")
         private SnippetBean snippet;
+
+        public boolean getSelected() {
+            return selected;
+        }
+
+        public void setSelected(boolean selected) {
+            this.selected = selected;
+        }
 
         public String getKind() {
             return kind;

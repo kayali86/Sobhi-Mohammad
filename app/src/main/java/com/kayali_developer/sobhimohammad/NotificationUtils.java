@@ -6,7 +6,10 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.media.AudioAttributes;
+import android.net.Uri;
 import android.os.Build;
+import android.provider.Settings;
 
 import com.kayali_developer.sobhimohammad.utilities.AppDateUtils;
 
@@ -29,10 +32,17 @@ class NotificationUtils {
         builder.setPriority(Notification.PRIORITY_MAX);
         builder.setSmallIcon(R.drawable.ic_launcher_foreground);
         builder.setColor(context.getResources().getColor(R.color.colorAccent));
+        builder.setSound(Settings.System.DEFAULT_NOTIFICATION_URI);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID_STR, NOTIFICATION_CHANNEL_ID_STR, NotificationManager.IMPORTANCE_HIGH);
             notificationChannel.setDescription(NOTIFICATION_CHANNEL_ID_STR);
-            notificationChannel.setSound(null, null);
+            //Uri uri = Uri.parse("android.resource://"+context.getPackageName()+"/" + R.raw.new_video);
+            Uri uri= Settings.System.DEFAULT_NOTIFICATION_URI;
+            AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .setUsage(AudioAttributes.USAGE_ALARM)
+                    .build();
+            notificationChannel.setSound(uri, audioAttributes);
             notificationChannel.enableLights(true);
             notificationChannel.setLightColor(Color.BLUE);
             notificationChannel.enableVibration(true);
@@ -41,7 +51,6 @@ class NotificationUtils {
         } else {
             builder.setPriority(Notification.PRIORITY_MAX);
         }
-
         Notification notification = builder.build();
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
         notificationManager.notify(NOTIFICATION_CHANNEL_ID_INT, notification);

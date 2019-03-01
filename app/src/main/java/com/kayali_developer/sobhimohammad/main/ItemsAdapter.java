@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 import at.blogc.android.views.ExpandableTextView;
 import jp.wasabeef.picasso.transformations.CropTransformation;
@@ -29,7 +30,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.PlayListItem
 
     private ItemsAdapterListener mItemsAdapterListener;
 
-    public ItemsAdapter(ItemsAdapterListener mPlayListsAdapterListener) {
+    ItemsAdapter(ItemsAdapterListener mPlayListsAdapterListener) {
         this.mItemsAdapterListener = mPlayListsAdapterListener;
     }
 
@@ -72,7 +73,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.PlayListItem
 
 
             if (url != null){
-                holder.iv_thumbnail_playlist_item.setOnClickListener(new View.OnClickListener() {
+                holder.item_play_list_item.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         mItemsAdapterListener.onPlayListItemClicked(item);
@@ -111,7 +112,6 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.PlayListItem
                         }
                     }
                 });
-
             }
 
 
@@ -151,6 +151,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.PlayListItem
         private ExpandableTextView tv_exp_description;
         private ImageView tv_expand_description;
         private TextView tv_publish_date;
+        private ConstraintLayout item_play_list_item;
 
         PlayListItemsViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -160,6 +161,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.PlayListItem
             tv_exp_description = itemView.findViewById(R.id.tv_exp_description);
             tv_expand_description = itemView.findViewById(R.id.tv_expand_description);
             tv_publish_date = itemView.findViewById(R.id.tv_publish_date);
+            item_play_list_item = itemView.findViewById(R.id.item_play_list_item);
         }
     }
 }

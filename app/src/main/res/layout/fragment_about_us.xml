@@ -1,27 +1,166 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <TextView
-        android:textAlignment="center"
-        android:text="Sobhi Mohammad"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:textAlignment="center"
-        android:text="Version 1.0.0"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient"
+    android:orientation="vertical">
 
     <ImageView
+        android:id="@+id/iv_about_us_image"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
         android:layout_gravity="center_horizontal"
+        android:scaleType="centerCrop"
         android:src="@drawable/splash_screen_image"
-        android:layout_width="240dp"
-        android:layout_height="240dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
+    <FrameLayout
+        android:paddingBottom="@dimen/mini_margin"
+        android:layout_margin="@dimen/small_margin"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@drawable/field_background"
+        app:layout_constraintBottom_toTopOf="@+id/icons_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_about_us_image">
 
+        <ScrollView
+            android:id="@+id/content_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/small_margin"
 
-</LinearLayout>
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/normal_margin"
+                    android:paddingTop="@dimen/small_margin"
+                    android:paddingEnd="@dimen/normal_margin"
+                    android:paddingBottom="@dimen/mini_margin"
+                    android:text="Sobhi Mohammad"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/header_text_size"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/normal_margin"
+                    android:paddingEnd="@dimen/normal_margin"
+                    android:paddingBottom="@dimen/small_margin"
+                    android:text="Version 1.0.0"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/text_size" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/normal_margin"
+                    android:paddingEnd="@dimen/normal_margin"
+                    android:paddingBottom="@dimen/mini_margin"
+                    android:text="Powered by:"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/text_size" />
+
+                <TextView
+                    android:id="@+id/tv_developer_website"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/normal_margin"
+                    android:paddingEnd="@dimen/normal_margin"
+                    android:paddingBottom="@dimen/normal_margin"
+                    android:text="www.kayali-developer.com"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="@dimen/title_text_size" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/normal_margin"
+                    android:paddingEnd="@dimen/normal_margin"
+                    android:paddingBottom="@dimen/normal_margin"
+                    android:text="عازف وملحن موسيقي وموزع-التطبيق الرسمي
+الكاتب جان فريسكور – بيروت هو من القلائل الذين يبتعدون عن الناس و يتنسّكون داخل الاستديو لينتشلوا من داخلهم كنوز ملوّنة باجمل الالحان و الكلمات , هو مايسترو يسافر بك الى عالم الخيال بانامله الذهبية التي قدّمت للكثير من النجوم اروع الالحان , بيروت تفتخر به كما وبلده سوريا يعشق فنّه و يتمنى ان يقّدم الاكثر , اغنى المكتبة الموسيقية في الوطن العربي بألحان اصبحت خالدة لان نسبة الاستماع اليها فاقت المعقول , هو الملحن و الموزع صبحي محمد الذي كنا في ضيافته داخل الاستديو الخاص به في لبنان"
+                    android:textSize="@dimen/title_text_size" />
+
+            </LinearLayout>
+
+        </ScrollView>
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/icons_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/small_margin"
+        android:background="@drawable/field_background"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/mini_margin"
+        android:paddingBottom="@dimen/mini_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/iv_facebook"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/small_margin"
+            android:layout_marginEnd="@dimen/small_margin"
+            android:src="@drawable/ic_facebook"
+            android:tint="@color/colorPrimary" />
+
+        <ImageView
+            android:id="@+id/iv_facebook2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/small_margin"
+            android:src="@drawable/ic_facebook"
+            android:tint="@color/colorPrimary" />
+
+        <ImageView
+            android:id="@+id/iv_youtube"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/small_margin"
+            android:src="@drawable/ic_youtube"
+            android:tint="@color/colorPrimary" />
+
+        <ImageView
+            android:id="@+id/iv_twitter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/small_margin"
+            android:src="@drawable/ic_twitter"
+            android:tint="@color/colorPrimary" />
+
+        <ImageView
+            android:id="@+id/iv_instagram"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/small_margin"
+            android:src="@drawable/ic_instagram"
+            android:tint="@color/colorPrimary" />
+
+        <ImageView
+            android:id="@+id/iv_google_play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/small_margin"
+            android:src="@drawable/ic_google_play"
+            android:tint="@color/colorPrimary" />
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

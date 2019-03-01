@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/item_play_list_item"
     android:background="@color/backgroundColor"
+    android:clickable="true"
     android:elevation="@dimen/normal_elevation"
     android:layout_marginStart="@dimen/normal_margin"
     android:layout_marginEnd="@dimen/normal_margin"

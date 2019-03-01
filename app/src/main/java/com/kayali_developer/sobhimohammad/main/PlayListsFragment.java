@@ -58,7 +58,7 @@ public class PlayListsFragment extends Fragment implements PlayListsAdapter.Play
         return rootView;
     }
 
-    public static PlayListsFragment newInstance() {
+    static PlayListsFragment newInstance() {
         return new PlayListsFragment();
     }
 

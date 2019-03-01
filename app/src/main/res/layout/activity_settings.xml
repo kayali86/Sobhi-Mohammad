@@ -6,4 +6,110 @@
     android:layout_height="match_parent"
     tools:context=".main.SettingsActivity">
 
+    <TextView
+        android:textStyle="bold"
+        android:text="Count of new videos:"
+        android:textSize="@dimen/title_text_size"
+        android:textColor="@color/colorPrimary"
+        android:paddingTop="@dimen/normal_margin"
+        android:paddingStart="@dimen/normal_margin"
+        android:paddingEnd="@dimen/normal_margin"
+        android:id="@+id/tv_new_videos_count_hint"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:maxLength="3"
+        android:inputType="number"
+        android:hint="20"
+        android:textSize="@dimen/title_text_size"
+        android:textColor="@color/normalTextColor"
+        android:textColorHint="@color/lightTextColor"
+        android:paddingTop="@dimen/normal_margin"
+        android:paddingBottom="@dimen/normal_margin"
+        android:paddingEnd="@dimen/normal_margin"
+        android:paddingStart="@dimen/mini_margin"
+        android:layout_marginStart="@dimen/small_margin"
+        android:layout_marginEnd="@dimen/small_margin"
+        android:layout_marginBottom="@dimen/small_margin"
+        app:layout_constraintTop_toBottomOf="@id/tv_new_videos_count_hint"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:id="@+id/etv_new_videos_count"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <View
+        android:id="@+id/line1"
+        android:layout_margin="@dimen/small_margin"
+        app:layout_constraintTop_toBottomOf="@+id/etv_new_videos_count"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:background="@color/grayColor"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"/>
+
+
+    <TextView
+        android:textStyle="bold"
+        android:text="Notification settings:"
+        android:textSize="@dimen/title_text_size"
+        android:textColor="@color/colorPrimary"
+        android:paddingTop="@dimen/normal_margin"
+        android:paddingStart="@dimen/normal_margin"
+        android:paddingEnd="@dimen/normal_margin"
+        android:id="@+id/tv_notification_title"
+        app:layout_constraintTop_toBottomOf="@+id/line1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Switch
+        android:textColorHint="@color/normalTextColor"
+        android:id="@+id/sw_new_videos_notification"
+        android:hint="New Videos Notification"
+        android:layout_margin="@dimen/normal_margin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_notification_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Switch
+        android:textColorHint="@color/normalTextColor"
+        android:textColor="@color/normalTextColor"
+        android:id="@+id/sw_general_notification"
+        android:hint="General Notification"
+        android:layout_margin="@dimen/normal_margin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sw_new_videos_notification"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <View
+        android:id="@+id/line2"
+        android:layout_margin="@dimen/small_margin"
+        app:layout_constraintTop_toBottomOf="@+id/sw_general_notification"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:background="@color/grayColor"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"/>
+
+    <Switch
+        android:textColorHint="@color/normalTextColor"
+        android:textColor="@color/normalTextColor"
+        android:id="@+id/sw_dark_mode"
+        android:hint="Dark Mode"
+        android:layout_margin="@dimen/normal_margin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/line2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </androidx.constraintlayout.widget.ConstraintLayout>

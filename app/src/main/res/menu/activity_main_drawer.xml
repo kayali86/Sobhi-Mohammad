@@ -14,7 +14,7 @@
             android:title="Play Lists" />
         <item
             android:id="@+id/nav_favorites_videos"
-            android:icon="@drawable/ic_favorites_videos_list"
+            android:icon="@drawable/ic_heart"
             android:title="Favorites Videos" />
 
         <item
@@ -32,13 +32,13 @@
         <menu>
             <item
                 android:id="@+id/nav_privacy_policy"
-                android:icon="@drawable/ic_menu_share"
+                android:icon="@drawable/ic_account_box"
                 android:title="Privacy Policy" />
 
             <item
                 android:id="@+id/nav_home_page"
                 android:icon="@drawable/ic_web"
-                android:title="Homepage" />
+                android:title="Website" />
 
             <item
                 android:id="@+id/nav_rate_app"

@@ -6,12 +6,14 @@
     android:layout_height="match_parent"
     android:background="@android:color/white"
     android:orientation="vertical"
-    tools:context=".main.ItemFragment">
+    android:id="@+id/video_activity_layout"
+    tools:context=".main.VideoActivity">
 
-    <FrameLayout
+    <fragment
         android:id="@+id/youtube_video_fragment"
+        android:name="com.google.android.youtube.player.YouTubePlayerFragment"
         android:layout_width="match_parent"
-        android:layout_height="320dp"
+        android:layout_height="wrap_content"
         android:background="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -21,24 +23,47 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_item_title">
+        app:layout_constraintStart_toStartOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <TextView
+                android:id="@+id/tv_item_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/small_margin"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/title_text_size"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:id="@+id/line2"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="@dimen/small_margin"
+                android:layout_marginTop="@dimen/mini_margin"
+                android:layout_marginEnd="@dimen/small_margin"
+                android:background="@color/grayColor"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_item_title" />
+
             <ImageView
                 android:id="@+id/iv_view_count"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:layout_marginStart="@dimen/small_margin"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="@dimen/large_margin"
                 android:layout_marginTop="@dimen/small_margin"
                 android:src="@drawable/ic_eye"
                 android:tint="@color/grayColor"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@+id/line2" />
 
             <TextView
                 android:id="@+id/tv_view_count"
@@ -51,14 +76,14 @@
 
             <ImageView
                 android:id="@+id/iv_likes"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:layout_marginTop="@dimen/small_margin"
                 android:src="@drawable/ic_like"
                 android:tint="@color/grayColor"
                 app:layout_constraintEnd_toStartOf="@id/iv_dislikes"
                 app:layout_constraintStart_toEndOf="@id/tv_view_count"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@+id/line2" />
 
             <TextView
                 android:id="@+id/tv_likes"
@@ -71,14 +96,14 @@
 
             <ImageView
                 android:id="@+id/iv_dislikes"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:layout_marginTop="@dimen/small_margin"
                 android:src="@drawable/ic_dislike"
                 android:tint="@color/grayColor"
-                app:layout_constraintEnd_toStartOf="@id/iv_favorite"
+                app:layout_constraintEnd_toStartOf="@id/favorite"
                 app:layout_constraintStart_toEndOf="@id/tv_likes"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@+id/line2" />
 
             <TextView
                 android:id="@+id/tv_dislikes"
@@ -89,26 +114,57 @@
                 app:layout_constraintStart_toEndOf="@id/iv_dislikes"
                 app:layout_constraintTop_toBottomOf="@+id/iv_dislikes" />
 
-            <ImageView
-                android:id="@+id/iv_favorite"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginTop="@dimen/small_margin"
-                android:tint="@color/colorPrimary"
-                app:layout_constraintEnd_toStartOf="@id/iv_share"
+            <LinearLayout
+                android:id="@+id/favorite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toStartOf="@id/share"
                 app:layout_constraintStart_toEndOf="@id/iv_dislikes"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@+id/tv_item_title">
 
-            <ImageView
-                android:id="@+id/iv_share"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginTop="@dimen/small_margin"
-                android:layout_marginEnd="@dimen/small_margin"
-                android:src="@drawable/ic_menu_share"
-                android:tint="@color/colorPrimary"
+                <ImageView
+                    android:layout_gravity="center_horizontal"
+                    android:id="@+id/iv_favorite"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginTop="@dimen/normal_margin"
+                    android:tint="@color/colorPrimary" />
+
+                <TextView
+                    android:textColor="@color/colorPrimary"
+                    android:text="Favorite"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginEnd="@dimen/large_margin"
+                android:id="@+id/share"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@+id/tv_item_title">
+
+                <ImageView
+                    android:layout_gravity="center_horizontal"
+                    android:id="@+id/iv_share"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginTop="@dimen/normal_margin"
+                    android:src="@drawable/ic_menu_share"
+                    android:tint="@color/colorPrimary" />
+
+                <TextView
+                    android:textColor="@color/colorPrimary"
+                    android:text="Share"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
 
             <View
                 android:id="@+id/line1"
@@ -120,19 +176,7 @@
                 android:background="@color/grayColor"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_view_count" />
-
-            <TextView
-                android:id="@+id/tv_item_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/small_margin"
-                android:textColor="@color/colorPrimary"
-                android:textSize="@dimen/title_text_size"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/line1" />
+                app:layout_constraintTop_toBottomOf="@+id/share" />
 
             <TextView
                 android:id="@+id/tv_item_description"
@@ -142,7 +186,7 @@
                 android:textSize="@dimen/text_size"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_item_title" />
+                app:layout_constraintTop_toBottomOf="@+id/line1" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>

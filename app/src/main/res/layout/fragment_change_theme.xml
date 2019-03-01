@@ -1,6 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/background_dark"
+    android:orientation="vertical">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <TextView
+            android:paddingTop="@dimen/normal_margin"
+            android:textStyle="bold"
+            android:textColor="@color/lightTextColor"
+            android:textAlignment="center"
+            android:text="Purple"
+            android:background="@color/colorPrimary"
+            android:id="@+id/purple_theme"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <TextView
+            android:paddingTop="@dimen/normal_margin"
+            android:textStyle="bold"
+            android:textColor="@color/lightTextColor"
+            android:textAlignment="center"
+            android:text="Red"
+            android:background="@color/redColorPrimary"
+            android:id="@+id/red_theme"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <TextView
+            android:paddingTop="@dimen/normal_margin"
+            android:textStyle="bold"
+            android:textColor="@color/lightTextColor"
+            android:textAlignment="center"
+            android:text="Yellow"
+            android:background="@color/yellowColorPrimary"
+            android:id="@+id/yellow_theme"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <TextView
+            android:paddingTop="@dimen/normal_margin"
+            android:textStyle="bold"
+            android:textColor="@color/lightTextColor"
+            android:textAlignment="center"
+            android:text="Brown"
+            android:background="@color/brownColorPrimary"
+            android:id="@+id/brown_theme"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <TextView
+            android:paddingTop="@dimen/normal_margin"
+            android:textStyle="bold"
+            android:textColor="@color/lightTextColor"
+            android:textAlignment="center"
+            android:text="Green"
+            android:background="@color/greenColorPrimary"
+            android:id="@+id/green_theme"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <TextView
+            android:paddingTop="@dimen/normal_margin"
+            android:textStyle="bold"
+            android:textColor="@color/lightTextColor"
+            android:textAlignment="center"
+            android:text="Blue"
+            android:background="@color/blueColorPrimary"
+            android:id="@+id/blue_theme"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+    </LinearLayout>
 </LinearLayout>

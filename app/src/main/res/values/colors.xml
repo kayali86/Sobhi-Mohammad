@@ -4,10 +4,31 @@
     <color name="colorPrimaryDark">#59267c</color>
     <color name="colorAccent">#991180</color>
 
+    <color name="darkBackgroundColor">#212121</color>
     <color name="backgroundColor">#ffffff</color>
     <color name="grayColor">#9E9E9E</color>
 
     <color name="lightTextColor">#e2d4e7</color>
     <color name="normalTextColor">#4c007f</color>
-    <color name="darkTextColor">#40195b</color>
+    <color name="darkTextColor">#212121</color>
+    <color name="gray_textColor">#424242</color>
+
+    <color name="loaderBackgroundColor">#70000000</color>
+
+    <color name="redColorPrimary">#d50000</color>
+    <color name="redColorPrimaryDark">#9b0000</color>
+
+    <color name="blueColorPrimary">#1565c0</color>
+    <color name="blueColorPrimaryDark">#003c8f</color>
+
+    <color name="greenColorPrimary">#388e3c</color>
+    <color name="greenColorPrimaryDark">#00600f</color>
+
+    <color name="yellowColorPrimary">#ffc107</color>
+    <color name="yellowColorPrimaryDark">#c79100</color>
+
+    <color name="brownColorPrimary">#5d4037</color>
+    <color name="brownColorPrimaryDark">#321911</color>
+
+
 </resources>

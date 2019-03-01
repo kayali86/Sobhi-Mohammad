@@ -12,7 +12,6 @@ import com.kayali_developer.sobhimohammad.data.model.VideoStatisticsResponse;
 import com.kayali_developer.sobhimohammad.data.remote.APIService;
 import com.kayali_developer.sobhimohammad.data.remote.ApiUtils;
 import com.kayali_developer.sobhimohammad.utilities.AppDateUtils;
-import com.kayali_developer.sobhimohammad.utilities.AppExecutors;
 import com.kayali_developer.sobhimohammad.utilities.Prefs;
 
 import java.util.ArrayList;
@@ -33,14 +32,8 @@ public class MainViewModel extends AndroidViewModel {
     private static final String ORDER = "date";
     private static final int MAX_RESULTS = 50;
 
-    private long mAddedVideosCount = 0;
-    private long mRemovedVideosCount = 0;
-
     private AppDatabase mDb;
     private APIService mService;
-
-    private PlayListItemsResponse mPlaylistItemsResponse;
-    private MutableLiveData<PlayListItemsResponse> mPlaylistItemsResponseLive = new MutableLiveData<>();
 
     private PlayListItemsResponse.Item mCurrentItem = null;
     private MutableLiveData<VideoStatisticsResponse> mCurrentItemStatisticsLive = new MutableLiveData<>();
@@ -55,13 +48,15 @@ public class MainViewModel extends AndroidViewModel {
     private List<PlayListItemsResponse.Item> mAllVideos;
     private List<PlayListsResponse.Item> mAllPlayLists;
 
+    List<PlayListItemsResponse.Item> itemsToDelete = new ArrayList<>();
+
     public MainViewModel(@NonNull Application application) {
         super(application);
         mDb = AppDatabase.getInstance(application);
         mAllPlayListsLive = new MutableLiveData<>();
         mNewVideosLive = new MutableLiveData<>();
         mFavoritesItemsLive = new MutableLiveData<>();
-        mFavoritesItemsLive.postValue(mDb.videoDao().loadAllVideos());
+        mFavoritesItemsLive.postValue(mDb.videoDao().loadAllFavoriteVideos());
 
         mAllVideos = new ArrayList<>();
         mNewVideos = new ArrayList<>();
@@ -70,7 +65,6 @@ public class MainViewModel extends AndroidViewModel {
         mService = ApiUtils.getAPIService();
 
         loadAndUpdateAllVideosNewVideosAllPlayLists();
-        //loadPlayLists();
 
     }
 
@@ -162,36 +156,10 @@ public class MainViewModel extends AndroidViewModel {
         });
     }
 
-    public boolean isFavorite(String itemId){
-        return mDb.videoDao().isFavorite(itemId);
+    void updateFavoriteItems(){
+        mFavoritesItemsLive.setValue(mDb.videoDao().loadAllFavoriteVideos());
     }
 
-    public boolean addToFavorites(PlayListItemsResponse.Item currentItem){
-
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                mAddedVideosCount = mDb.videoDao().insertVideo(currentItem);
-            }
-        });
-
-        boolean added = mAddedVideosCount > 0;
-        mAddedVideosCount = 0;
-
-        return added;
-    }
-
-    public boolean removeFromFavorites(String itemId){
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                mRemovedVideosCount = mDb.videoDao().deleteVideoByItemId(itemId);
-            }
-        });
-        boolean removed = mRemovedVideosCount > 0;
-        mRemovedVideosCount = 0;
-        return removed;
-    }
 
     private void showToastMessage(String message) {
         Toast.makeText(getApplication(), message, Toast.LENGTH_SHORT).show();
@@ -239,10 +207,19 @@ public class MainViewModel extends AndroidViewModel {
         return mFavoritesItemsLive;
     }
 
-
-
     public void setFavoritesItems(List<PlayListItemsResponse.Item> mFavoritesItems) {
         this.mFavoritesItems = mFavoritesItems;
+    }
+
+    boolean removeFavoriteItems(List<PlayListItemsResponse.Item> itemsToDelete){
+        int deletedItemsCount = 0;
+        for (PlayListItemsResponse.Item item : itemsToDelete){
+            int count = mDb.videoDao().deleteVideoByItemId(item.getId());
+            if (count > 0){
+                deletedItemsCount ++;
+            }
+        }
+        return deletedItemsCount == itemsToDelete.size();
     }
 
     public void setNewVideos(List<PlayListItemsResponse.Item> mNewVideos) {

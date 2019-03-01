@@ -13,7 +13,7 @@ import androidx.room.Query;
 @Dao
 public interface FavoritesVideosDao {
     @Query("SELECT * FROM videos")
-    List<PlayListItemsResponse.Item> loadAllVideos();
+    List<PlayListItemsResponse.Item> loadAllFavoriteVideos();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insertVideo(PlayListItemsResponse.Item item);
@@ -22,7 +22,7 @@ public interface FavoritesVideosDao {
     int deleteVideoByItemId(String itemId);
 
     @Query("DELETE FROM videos")
-    int deleteAllVideos();
+    int deleteAllFavoriteVideos();
 
     @Query("SELECT CASE WHEN EXISTS (SELECT * FROM videos WHERE id = :itemId) THEN CAST(1 AS BIT) ELSE CAST(0 AS BIT) END")
     Boolean isFavorite(String itemId);

@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+import com.kayali_developer.sobhimohammad.main.Themes;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -49,4 +50,54 @@ public class Prefs {
         return viewedItemsIds;
     }
 
+    public static void setDarkModeStatus(Context context, boolean status) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("darkMode", status);
+        editor.apply();
+    }
+
+    public static boolean getDarkModeStatus(Context context) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPreferences.getBoolean("darkMode", false);
+    }
+
+
+    public static void setNewVideosNotificationStatus(Context context, boolean status) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("newVideosNotification", status);
+        editor.apply();
+    }
+
+    public static boolean getNewVideosNotificationStatus(Context context) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPreferences.getBoolean("newVideosNotification", false);
+    }
+
+    public static void setGeneralNotificationStatus(Context context, boolean status) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("generalNotification", status);
+        editor.apply();
+    }
+
+    public static boolean getGeneralNotificationStatus(Context context) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPreferences.getBoolean("generalNotification", false);
+    }
+
+    public static void setCurrentTheme(Context context, Themes theme) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("theme", theme.toString());
+        editor.apply();
+    }
+
+    public static Themes getCurrentTheme(Context context) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return Themes.valueOf(sharedPreferences.getString("theme", Themes.PURPLE.toString()));
+    }
 }
+
+
