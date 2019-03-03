@@ -7,7 +7,7 @@
     android:background="@android:color/white"
     android:orientation="vertical"
     android:id="@+id/video_activity_layout"
-    tools:context=".main.VideoActivity">
+    tools:context=".videoactivity.VideoActivity">
 
     <fragment
         android:id="@+id/youtube_video_fragment"
@@ -132,8 +132,9 @@
                     android:tint="@color/colorPrimary" />
 
                 <TextView
+                    android:id="@+id/tv_favorite"
                     android:textColor="@color/colorPrimary"
-                    android:text="Favorite"
+                    android:text="@string/favorite"
                     android:layout_gravity="center_horizontal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
@@ -159,8 +160,9 @@
                     android:tint="@color/colorPrimary" />
 
                 <TextView
+                    android:id="@+id/tv_share"
                     android:textColor="@color/colorPrimary"
-                    android:text="Share"
+                    android:text="@string/share"
                     android:layout_gravity="center_horizontal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />

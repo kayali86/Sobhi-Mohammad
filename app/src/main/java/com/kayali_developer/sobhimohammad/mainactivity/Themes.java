@@ -1,4 +1,4 @@
-package com.kayali_developer.sobhimohammad.main;
+package com.kayali_developer.sobhimohammad.mainactivity;
 
 public enum Themes {
     PURPLE,

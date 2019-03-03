@@ -1,4 +1,4 @@
-package com.kayali_developer.sobhimohammad.main;
+package com.kayali_developer.sobhimohammad.mainfragment;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.kayali_developer.sobhimohammad.R;
 import com.kayali_developer.sobhimohammad.data.model.PlayListsResponse;
+import com.kayali_developer.sobhimohammad.utilities.ThemeUtils;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -22,9 +23,11 @@ public class PlayListsAdapter extends RecyclerView.Adapter<PlayListsAdapter.Play
     private List<PlayListsResponse.Item> mItems;
 
     private PlayListsAdapterListener mPlayListsAdapterListener;
+    private Context mContext;
 
-    PlayListsAdapter(PlayListsAdapterListener mPlayListsAdapterListener) {
+    PlayListsAdapter(PlayListsAdapterListener mPlayListsAdapterListener, Context context) {
         this.mPlayListsAdapterListener = mPlayListsAdapterListener;
+        mContext = context;
     }
 
     interface PlayListsAdapterListener{
@@ -51,6 +54,7 @@ public class PlayListsAdapter extends RecyclerView.Adapter<PlayListsAdapter.Play
                 error(R.drawable.no_image_available).
                 into(holder.iv_thumbnail_playlist);
 
+        holder.tv_play_list_title.setBackgroundColor(ThemeUtils.getThemePrimaryColor(mContext));
         if (item.getSnippet().getTitle() != null){
             holder.tv_play_list_title.setText(item.getSnippet().getTitle());
         }

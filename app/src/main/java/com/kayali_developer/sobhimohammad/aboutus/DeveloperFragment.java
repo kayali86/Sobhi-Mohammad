@@ -1,4 +1,4 @@
-package com.kayali_developer.sobhimohammad.main;
+package com.kayali_developer.sobhimohammad.aboutus;
 
 import android.content.Context;
 import android.content.Intent;
@@ -49,7 +49,7 @@ public class DeveloperFragment extends Fragment {
     }
 
     private void openEmail(String address, String subject){
-        if (getContext() != null){
+        if (getContext() != null && getActivity() != null){
             Intent emailIntent = EmailIntentBuilder.from(getContext())
                     .to(address)
                     .subject(subject)
@@ -74,7 +74,7 @@ public class DeveloperFragment extends Fragment {
 
             case R.id.tv_used_libraries:
                 UsedLibrariesFragment usedLibrariesFragment = new UsedLibrariesFragment();
-                mActivity.fragmentManager.beginTransaction().add(R.id.about_us_fragment_container, usedLibrariesFragment, UsedLibrariesFragment.TAG).commitAllowingStateLoss();
+                mActivity.fragmentManager.beginTransaction().add(R.id.about_us_fragment_container, usedLibrariesFragment, UsedLibrariesFragment.TAG).addToBackStack(null).commitAllowingStateLoss();
                 break;
         }
     }

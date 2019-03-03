@@ -1,4 +1,4 @@
-package com.kayali_developer.sobhimohammad.main;
+package com.kayali_developer.sobhimohammad.mainfragment;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -12,6 +12,7 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.kayali_developer.sobhimohammad.R;
 import com.kayali_developer.sobhimohammad.data.model.PlayListItemsResponse;
+import com.kayali_developer.sobhimohammad.mainactivity.MainActivity;
 
 import java.util.List;
 
@@ -24,24 +25,36 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class NewVideosFragment extends Fragment implements ItemsAdapter.ItemsAdapterListener {
-    public static final String TAG = "NewVideosFragmentTag";
-    static final String NEW_VIDEOS_RESPONSE_KEY = "new_videos_response_key";
-    ItemsAdapter mAdapter;
+public class ItemsFragment extends Fragment implements ItemsAdapter.ItemsAdapterListener {
+
+    public static final String PLAY_LIST_ITEMS_FRAGMENT_TAG = "PLAY_LIST_ITEMS_FRAGMENT_TAG";
+    public static final String PLAY_LIST_ITEMS_RESPONSE_KEY = "play_list_items_response_key";
+    public static final String PLAY_LIST_TITLE_KEY = "play_list_title_key";
 
     @BindView(R.id.rv_play_list_items)
     RecyclerView rvPlayListItems;
     @BindView(R.id.no_items_view)
     LinearLayout noItemsView;
     private Unbinder unbinder;
+    private MainActivity mActivity;
 
-    private NewVideosFragmentListener mNewVideosFragmentListener;
-
-    public interface NewVideosFragmentListener {
-        void onPlayListItemClicked(PlayListItemsResponse.Item item);
+    public ItemsFragment() {
     }
 
-    public NewVideosFragment() {
+    private ItemsFragmentListener mItemsFragmentListener;
+
+    public interface ItemsFragmentListener {
+        void onPlayListItemClicked(PlayListItemsResponse.Item item);
+
+        void onItemsFragmentAttached();
+
+        void onItemsFragmentDetached();
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mActivity = (MainActivity) getActivity();
     }
 
     @Nullable
@@ -50,17 +63,22 @@ public class NewVideosFragment extends Fragment implements ItemsAdapter.ItemsAda
         View rootView = inflater.inflate(R.layout.fragment_items, container, false);
         unbinder = ButterKnife.bind(this, rootView);
         if (getArguments() != null) {
+            String mTitle = getArguments().getString(PLAY_LIST_TITLE_KEY);
+            if (mTitle != null && mActivity != null){
+                mActivity.setTitle(mTitle);
+            }
             List<PlayListItemsResponse.Item> items;
 
-            String responseStr = getArguments().getString(NEW_VIDEOS_RESPONSE_KEY);
+            String responseStr = getArguments().getString(PLAY_LIST_ITEMS_RESPONSE_KEY);
             if (responseStr != null) {
-                TypeToken<List<PlayListItemsResponse.Item>> token = new TypeToken<List<PlayListItemsResponse.Item>>() {
-                };
+                TypeToken<List<PlayListItemsResponse.Item>> token = new TypeToken<List<PlayListItemsResponse.Item>>() {};
                 try {
                     items = new Gson().fromJson(responseStr, token.getType());
                     populatePlayLists(items);
                 } catch (JsonSyntaxException e) {
                     e.printStackTrace();
+                }catch (NullPointerException npe){
+                    npe.printStackTrace();
                 }
             }
 
@@ -68,13 +86,9 @@ public class NewVideosFragment extends Fragment implements ItemsAdapter.ItemsAda
         return rootView;
     }
 
-    static ItemsFragment newInstance() {
-        return new ItemsFragment();
-    }
-
-    void populatePlayLists(List<PlayListItemsResponse.Item> items) {
+    private void populatePlayLists(List<PlayListItemsResponse.Item> items) {
         if (items != null && items.size() > 0) {
-            mAdapter = new ItemsAdapter(this::onPlayListItemClicked);
+            ItemsAdapter mAdapter = new ItemsAdapter(this::onPlayListItemClicked);
             LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
             rvPlayListItems.setLayoutManager(layoutManager);
             rvPlayListItems.hasFixedSize();
@@ -87,7 +101,7 @@ public class NewVideosFragment extends Fragment implements ItemsAdapter.ItemsAda
 
     @Override
     public void onPlayListItemClicked(PlayListItemsResponse.Item item) {
-        mNewVideosFragmentListener.onPlayListItemClicked(item);
+        mItemsFragmentListener.onPlayListItemClicked(item);
     }
 
     @Override
@@ -99,7 +113,13 @@ public class NewVideosFragment extends Fragment implements ItemsAdapter.ItemsAda
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        mNewVideosFragmentListener = (NewVideosFragmentListener) context;
+        mItemsFragmentListener = (ItemsFragmentListener) context;
+        mItemsFragmentListener.onItemsFragmentAttached();
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mItemsFragmentListener.onItemsFragmentDetached();
+    }
 }

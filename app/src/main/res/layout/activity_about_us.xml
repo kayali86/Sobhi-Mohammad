@@ -4,8 +4,5 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/about_us_fragment_container"
-    tools:context=".main.AboutUsActivity">
-
-
-
+    tools:context=".aboutus.AboutUsActivity">
 </FrameLayout>

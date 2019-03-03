@@ -20,7 +20,7 @@ public class AppDateUtils {
         }
     }
 
-    public static Date youtubeFormatToDate(String date) {
+    private static Date youtubeFormatToDate(String date) {
         if (date != null){
             date = new StringBuilder().append("\"").append(date).append("\"").toString();
             return new GsonBuilder().setDateFormat(YOUTUBE_DATE_FORMAT).create().fromJson(date, Date.class);
@@ -29,7 +29,7 @@ public class AppDateUtils {
         }
     }
 
-    static String dateToDeFormat(Date date) {
+    private static String dateToDeFormat(Date date) {
         if (date != null){
             String dateStr = new GsonBuilder().setDateFormat(DE_TIME_DATE_FORMAT).create().toJson(date);
             return dateStr.substring(1, dateStr.length() -1);

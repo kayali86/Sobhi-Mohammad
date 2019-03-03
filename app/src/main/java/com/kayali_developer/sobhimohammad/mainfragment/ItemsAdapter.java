@@ -1,4 +1,4 @@
-package com.kayali_developer.sobhimohammad.main;
+package com.kayali_developer.sobhimohammad.mainfragment;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -12,6 +12,7 @@ import com.kayali_developer.sobhimohammad.R;
 import com.kayali_developer.sobhimohammad.data.model.PlayListItemsResponse;
 import com.kayali_developer.sobhimohammad.utilities.AppDateUtils;
 import com.kayali_developer.sobhimohammad.utilities.Prefs;
+import com.kayali_developer.sobhimohammad.utilities.ThemeUtils;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -81,9 +82,11 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.PlayListItem
                 });
             }
 
+            holder.tv_title.setTextColor(ThemeUtils.getThemePrimaryColor(mContext));
             if (item.getSnippet().getTitle() != null){
                 holder.tv_title.setText(item.getSnippet().getTitle());
             }
+
 
             if (item.getSnippet().getDescription() != null){
                 holder.tv_exp_description.setText(item.getSnippet().getDescription());
@@ -97,18 +100,19 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.PlayListItem
                 // or set them separately
                 holder.tv_exp_description.setExpandInterpolator(new OvershootInterpolator());
                 holder.tv_exp_description.setCollapseInterpolator(new OvershootInterpolator());
-                holder.tv_expand_description.setOnClickListener(new View.OnClickListener() {
+                holder.iv_expand_description.setColorFilter(ThemeUtils.getThemePrimaryColor(mContext));
+                holder.iv_expand_description.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if (holder.tv_exp_description.isExpanded())
                         {
                             holder.tv_exp_description.collapse();
-                            holder.tv_expand_description.setImageResource(R.drawable.ic_keyboard_arrow_down);
+                            holder.iv_expand_description.setImageResource(R.drawable.ic_keyboard_arrow_down);
                         }
                         else
                         {
                             holder.tv_exp_description.expand();
-                            holder.tv_expand_description.setImageResource(R.drawable.ic_keyboard_arrow_up);
+                            holder.iv_expand_description.setImageResource(R.drawable.ic_keyboard_arrow_up);
                         }
                     }
                 });
@@ -149,7 +153,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.PlayListItem
         private ImageView iv_viewed_item;
         private TextView tv_title;
         private ExpandableTextView tv_exp_description;
-        private ImageView tv_expand_description;
+        private ImageView iv_expand_description;
         private TextView tv_publish_date;
         private ConstraintLayout item_play_list_item;
 
@@ -159,7 +163,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.PlayListItem
             iv_viewed_item = itemView.findViewById(R.id.iv_viewed_item);
             tv_title = itemView.findViewById(R.id.tv_title);
             tv_exp_description = itemView.findViewById(R.id.tv_exp_description);
-            tv_expand_description = itemView.findViewById(R.id.tv_expand_description);
+            iv_expand_description = itemView.findViewById(R.id.iv_expand_description);
             tv_publish_date = itemView.findViewById(R.id.tv_publish_date);
             item_play_list_item = itemView.findViewById(R.id.item_play_list_item);
         }

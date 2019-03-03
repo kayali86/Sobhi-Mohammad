@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient"
+    android:id="@+id/about_us_fragment_layout"
     android:orientation="vertical">
 
     <ImageView
@@ -47,7 +48,7 @@
                     android:paddingTop="@dimen/small_margin"
                     android:paddingEnd="@dimen/normal_margin"
                     android:paddingBottom="@dimen/mini_margin"
-                    android:text="Sobhi Mohammad"
+                    android:text="@string/sobhi_mohammad_translatable"
                     android:textAlignment="center"
                     android:textSize="@dimen/header_text_size"
                     android:textStyle="bold" />
@@ -58,7 +59,7 @@
                     android:paddingStart="@dimen/normal_margin"
                     android:paddingEnd="@dimen/normal_margin"
                     android:paddingBottom="@dimen/small_margin"
-                    android:text="Version 1.0.0"
+                    android:text="@string/version"
                     android:textAlignment="center"
                     android:textSize="@dimen/text_size" />
 
@@ -68,7 +69,7 @@
                     android:paddingStart="@dimen/normal_margin"
                     android:paddingEnd="@dimen/normal_margin"
                     android:paddingBottom="@dimen/mini_margin"
-                    android:text="Powered by:"
+                    android:text="@string/powered_by"
                     android:textAlignment="center"
                     android:textSize="@dimen/text_size" />
 
@@ -90,8 +91,7 @@
                     android:paddingStart="@dimen/normal_margin"
                     android:paddingEnd="@dimen/normal_margin"
                     android:paddingBottom="@dimen/normal_margin"
-                    android:text="عازف وملحن موسيقي وموزع-التطبيق الرسمي
-الكاتب جان فريسكور – بيروت هو من القلائل الذين يبتعدون عن الناس و يتنسّكون داخل الاستديو لينتشلوا من داخلهم كنوز ملوّنة باجمل الالحان و الكلمات , هو مايسترو يسافر بك الى عالم الخيال بانامله الذهبية التي قدّمت للكثير من النجوم اروع الالحان , بيروت تفتخر به كما وبلده سوريا يعشق فنّه و يتمنى ان يقّدم الاكثر , اغنى المكتبة الموسيقية في الوطن العربي بألحان اصبحت خالدة لان نسبة الاستماع اليها فاقت المعقول , هو الملحن و الموزع صبحي محمد الذي كنا في ضيافته داخل الاستديو الخاص به في لبنان"
+                    android:text="@string/about_us_text"
                     android:textSize="@dimen/title_text_size" />
 
             </LinearLayout>

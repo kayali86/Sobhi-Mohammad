@@ -13,26 +13,26 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".main.AboutUsActivity"
-            android:parentActivityName=".main.MainActivity">
+        <activity android:name=".aboutus.AboutUsActivity"
+            android:parentActivityName=".mainactivity.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".main.MainActivity" />
+                android:value=".mainactivity.MainActivity" />
         </activity>
         <activity
-            android:name=".main.VideoActivity"
-            android:parentActivityName=".main.MainActivity">
+            android:name=".videoactivity.VideoActivity"
+            android:parentActivityName=".mainactivity.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".main.MainActivity" />
+                android:value=".mainactivity.MainActivity" />
         </activity>
         <activity
-            android:name=".main.SettingsActivity"
+            android:name=".settings.SettingsActivity"
             android:label="@string/action_settings"
-            android:parentActivityName=".main.MainActivity">
+            android:parentActivityName=".mainactivity.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".main.MainActivity" />
+                android:value=".mainactivity.MainActivity" />
         </activity>
 
         <service android:name=".MyFirebaseMessagingService">
@@ -68,7 +68,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".main.MainActivity"
+            android:name=".mainactivity.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>

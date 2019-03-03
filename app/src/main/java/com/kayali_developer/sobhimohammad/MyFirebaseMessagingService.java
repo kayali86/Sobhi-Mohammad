@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -19,7 +18,6 @@ import java.net.URL;
 import java.util.Map;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
-    private static final String TAG = "FirebaseMessaging";
     private PushNotification mPushNotification;
 
     @Override
@@ -29,27 +27,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             String pushNotificationJson = receivedMap.get("data");
             mPushNotification = new Gson().fromJson(pushNotificationJson, PushNotification.class);
 
-
-            Log.e(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>Notification Message data getVideo_id: " + mPushNotification.getPayload().getVideo_id());
-            Log.e(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>Notification Message data getChannel_id: " + mPushNotification.getPayload().getChannel_id());
-            Log.e(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>Notification Message data getTitle: " + mPushNotification.getPayload().getTitle());
-            Log.e(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>Notification Message data getAuthor: " + mPushNotification.getPayload().getAuthor());
-            Log.e(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>Notification Message data getPublished: " + mPushNotification.getPayload().getPublished());
-            Log.e(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>Notification Message data getUpdated: " + mPushNotification.getPayload().getUpdated());
-
             String largeIconUrl = "https://img.youtube.com/vi/" + mPushNotification.getPayload().getVideo_id() + "/mqdefault.jpg";
             new SendNotification(this).execute(largeIconUrl);
         }
 
 
     }
-
-    @Override
-    public void onNewToken(String s) {
-        super.onNewToken(s);
-        Log.e(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>Refreshed token: " + s);
-    }
-
 
     private class SendNotification extends AsyncTask<String, Void, Bitmap> {
 

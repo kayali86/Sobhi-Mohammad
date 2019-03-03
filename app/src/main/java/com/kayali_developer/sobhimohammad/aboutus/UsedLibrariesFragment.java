@@ -1,4 +1,4 @@
-package com.kayali_developer.sobhimohammad.main;
+package com.kayali_developer.sobhimohammad.aboutus;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -53,8 +53,6 @@ public class UsedLibrariesFragment extends Fragment {
             LibrariesAdapter librariesAdapter = new LibrariesAdapter(getContext(), libraries);
             lvLibraries.setAdapter(librariesAdapter);
         }
-
-
         return rootView;
     }
 
@@ -78,7 +76,7 @@ public class UsedLibrariesFragment extends Fragment {
         private Context mContext;
         private ArrayList<String> libraries;
 
-        public LibrariesAdapter(Context mContext, ArrayList<String> libraries) {
+        LibrariesAdapter(Context mContext, ArrayList<String> libraries) {
             this.mContext = mContext;
             this.libraries = libraries;
         }
@@ -109,5 +107,4 @@ public class UsedLibrariesFragment extends Fragment {
             return listItemView;
         }
     }
-
 }

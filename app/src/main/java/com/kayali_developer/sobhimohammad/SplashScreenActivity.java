@@ -3,10 +3,11 @@ package com.kayali_developer.sobhimohammad;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 
-import com.kayali_developer.sobhimohammad.main.MainActivity;
+import com.kayali_developer.sobhimohammad.mainactivity.MainActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class SplashScreenActivity extends AppCompatActivity {
 

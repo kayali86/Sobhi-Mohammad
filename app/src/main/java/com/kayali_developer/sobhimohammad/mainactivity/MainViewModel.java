@@ -1,4 +1,4 @@
-package com.kayali_developer.sobhimohammad.main;
+package com.kayali_developer.sobhimohammad.mainactivity;
 
 import android.app.Application;
 import android.widget.Toast;
@@ -11,8 +11,10 @@ import com.kayali_developer.sobhimohammad.data.model.PlayListsResponse;
 import com.kayali_developer.sobhimohammad.data.model.VideoStatisticsResponse;
 import com.kayali_developer.sobhimohammad.data.remote.APIService;
 import com.kayali_developer.sobhimohammad.data.remote.ApiUtils;
+import com.kayali_developer.sobhimohammad.mainfragment.MainFragment;
 import com.kayali_developer.sobhimohammad.utilities.AppDateUtils;
 import com.kayali_developer.sobhimohammad.utilities.Prefs;
+import com.kayali_developer.sobhimohammad.utilities.SingleEventMutableLive;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,24 +26,26 @@ import androidx.lifecycle.MutableLiveData;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import timber.log.Timber;
 
 public class MainViewModel extends AndroidViewModel {
+
     private static final String PART_SNIPPET = "snippet";
     private static final String PART_STATISTIC = "statistics";
     private static final String ORDER = "date";
     private static final int MAX_RESULTS = 50;
 
+    public int lastSelectedTabInMainFragment = 0;
+    String lastFragmentTag = MainFragment.TAG;
+
     private AppDatabase mDb;
     private APIService mService;
 
     private PlayListItemsResponse.Item mCurrentItem = null;
-    private MutableLiveData<VideoStatisticsResponse> mCurrentItemStatisticsLive = new MutableLiveData<>();
+    private SingleEventMutableLive<VideoStatisticsResponse> mCurrentItemStatisticsLive = new SingleEventMutableLive<>();
 
     private MutableLiveData<List<PlayListsResponse.Item>> mAllPlayListsLive;
-    private MutableLiveData<List<PlayListItemsResponse.Item>> mNewVideosLive;
+    private SingleEventMutableLive<List<PlayListItemsResponse.Item>> mNewVideosLive;
     private MutableLiveData<List<PlayListItemsResponse.Item>> mFavoritesItemsLive;
-
 
     private List<PlayListItemsResponse.Item> mFavoritesItems;
     private List<PlayListItemsResponse.Item> mNewVideos;
@@ -54,7 +58,7 @@ public class MainViewModel extends AndroidViewModel {
         super(application);
         mDb = AppDatabase.getInstance(application);
         mAllPlayListsLive = new MutableLiveData<>();
-        mNewVideosLive = new MutableLiveData<>();
+        mNewVideosLive = new SingleEventMutableLive<>();
         mFavoritesItemsLive = new MutableLiveData<>();
         mFavoritesItemsLive.postValue(mDb.videoDao().loadAllFavoriteVideos());
 
@@ -65,7 +69,6 @@ public class MainViewModel extends AndroidViewModel {
         mService = ApiUtils.getAPIService();
 
         loadAndUpdateAllVideosNewVideosAllPlayLists();
-
     }
 
     private void loadAndUpdateAllVideosNewVideosAllPlayLists() {
@@ -140,13 +143,22 @@ public class MainViewModel extends AndroidViewModel {
         return playlistItems;
     }
 
-    public void requestVideoStatistics(String videoId){
+    String getPlaylistTitle(String playListId){
+        String title = null;
+        for (PlayListsResponse.Item playlist : mAllPlayLists){
+            if (playlist.getId().equals(playListId)){
+                title = playlist.getSnippet().getTitle();
+            }
+        }
+        return title;
+    }
+
+    void requestVideoStatistics(String videoId){
         final APIService mService = ApiUtils.getAPIService();
         mService.getVideoStatistics(PART_STATISTIC, videoId, AppConstants.YOUTUBE_DATA_V3_API_KEY).enqueue(new Callback<VideoStatisticsResponse>() {
             @Override
             public void onResponse(Call<VideoStatisticsResponse> call, Response<VideoStatisticsResponse> response) {
                 mCurrentItemStatisticsLive.postValue(response.body());
-                Timber.e(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + response.body().getItems().size());
             }
 
             @Override
@@ -156,7 +168,7 @@ public class MainViewModel extends AndroidViewModel {
         });
     }
 
-    void updateFavoriteItems(){
+    public void updateFavoriteItems(){
         mFavoritesItemsLive.setValue(mDb.videoDao().loadAllFavoriteVideos());
     }
 
@@ -166,11 +178,11 @@ public class MainViewModel extends AndroidViewModel {
     }
 
 
-    public PlayListItemsResponse.Item getCurrentItem() {
+    PlayListItemsResponse.Item getCurrentItem() {
         return mCurrentItem;
     }
 
-    public MutableLiveData<VideoStatisticsResponse> getCurrentItemStatisticsLive() {
+    MutableLiveData<VideoStatisticsResponse> getCurrentItemStatisticsLive() {
         return mCurrentItemStatisticsLive;
     }
 
@@ -179,7 +191,7 @@ public class MainViewModel extends AndroidViewModel {
         return mAllPlayListsLive;
     }
 
-    public MutableLiveData<List<PlayListItemsResponse.Item>> getNewVideosLive() {
+    MutableLiveData<List<PlayListItemsResponse.Item>> getNewVideosLive() {
         return mNewVideosLive;
     }
 
@@ -203,11 +215,11 @@ public class MainViewModel extends AndroidViewModel {
         return mAllPlayLists;
     }
 
-    public MutableLiveData<List<PlayListItemsResponse.Item>> getAllFavoritesItemsLive(){
+    MutableLiveData<List<PlayListItemsResponse.Item>> getAllFavoritesItemsLive(){
         return mFavoritesItemsLive;
     }
 
-    public void setFavoritesItems(List<PlayListItemsResponse.Item> mFavoritesItems) {
+    void setFavoritesItems(List<PlayListItemsResponse.Item> mFavoritesItems) {
         this.mFavoritesItems = mFavoritesItems;
     }
 
@@ -222,11 +234,11 @@ public class MainViewModel extends AndroidViewModel {
         return deletedItemsCount == itemsToDelete.size();
     }
 
-    public void setNewVideos(List<PlayListItemsResponse.Item> mNewVideos) {
+    void setNewVideos(List<PlayListItemsResponse.Item> mNewVideos) {
         this.mNewVideos = mNewVideos;
     }
 
-    public void setCurrentItem(PlayListItemsResponse.Item mCurrentItem) {
+    void setCurrentItem(PlayListItemsResponse.Item mCurrentItem) {
         this.mCurrentItem = mCurrentItem;
     }
 }

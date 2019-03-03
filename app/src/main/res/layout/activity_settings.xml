@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".main.SettingsActivity">
+    tools:context=".settings.SettingsActivity">
 
     <TextView
         android:textStyle="bold"
@@ -42,27 +42,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <View
-        android:id="@+id/line1"
-        android:layout_margin="@dimen/small_margin"
-        app:layout_constraintTop_toBottomOf="@+id/etv_new_videos_count"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:background="@color/grayColor"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"/>
-
-
     <TextView
         android:textStyle="bold"
-        android:text="Notification settings:"
+        android:text="@string/notification_settings"
         android:textSize="@dimen/title_text_size"
         android:textColor="@color/colorPrimary"
         android:paddingTop="@dimen/normal_margin"
         android:paddingStart="@dimen/normal_margin"
         android:paddingEnd="@dimen/normal_margin"
         android:id="@+id/tv_notification_title"
-        app:layout_constraintTop_toBottomOf="@+id/line1"
+        app:layout_constraintTop_toBottomOf="@+id/etv_new_videos_count"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_width="match_parent"
@@ -71,7 +60,7 @@
     <Switch
         android:textColorHint="@color/normalTextColor"
         android:id="@+id/sw_new_videos_notification"
-        android:hint="New Videos Notification"
+        android:hint="@string/new_videos_notifications"
         android:layout_margin="@dimen/normal_margin"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -83,7 +72,7 @@
         android:textColorHint="@color/normalTextColor"
         android:textColor="@color/normalTextColor"
         android:id="@+id/sw_general_notification"
-        android:hint="General Notification"
+        android:hint="@string/general_notifications"
         android:layout_margin="@dimen/normal_margin"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -105,7 +94,7 @@
         android:textColorHint="@color/normalTextColor"
         android:textColor="@color/normalTextColor"
         android:id="@+id/sw_dark_mode"
-        android:hint="Dark Mode"
+        android:hint="@string/dark_mode"
         android:layout_margin="@dimen/normal_margin"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -1,4 +1,4 @@
-package com.kayali_developer.sobhimohammad.main;
+package com.kayali_developer.sobhimohammad.videoactivity;
 
 import android.app.Application;
 
@@ -35,19 +35,19 @@ public class VideoViewModel extends AndroidViewModel {
         return removedVideosCount > 0;
     }
 
-    public PlayListItemsResponse.Item getCurrentItem() {
+    PlayListItemsResponse.Item getCurrentItem() {
         return mCurrentItem;
     }
 
-    public void setCurrentItem(PlayListItemsResponse.Item mCurrentItem) {
+    void setCurrentItem(PlayListItemsResponse.Item mCurrentItem) {
         this.mCurrentItem = mCurrentItem;
     }
 
-    public VideoStatisticsResponse getItemStatistics() {
+    VideoStatisticsResponse getItemStatistics() {
         return mItemStatistics;
     }
 
-    public void setItemStatistics(VideoStatisticsResponse mItemStatistics) {
+    void setItemStatistics(VideoStatisticsResponse mItemStatistics) {
         this.mItemStatistics = mItemStatistics;
     }
 

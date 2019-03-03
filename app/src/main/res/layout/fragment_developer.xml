@@ -53,7 +53,7 @@
         android:paddingStart="@dimen/normal_margin"
         android:paddingEnd="@dimen/normal_margin"
         android:paddingTop="@dimen/normal_margin"
-        android:text="Used libraries"
+        android:text="@string/used_libraries"
         android:textAlignment="center"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="@dimen/title_text_size" />

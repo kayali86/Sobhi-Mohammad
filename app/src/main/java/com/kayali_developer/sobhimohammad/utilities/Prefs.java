@@ -7,7 +7,7 @@ import android.preference.PreferenceManager;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
-import com.kayali_developer.sobhimohammad.main.Themes;
+import com.kayali_developer.sobhimohammad.mainactivity.Themes;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;

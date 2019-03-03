@@ -1,4 +1,4 @@
-package com.kayali_developer.sobhimohammad.main;
+package com.kayali_developer.sobhimohammad.mainfragment;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -21,7 +21,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 public class PlayListsFragment extends Fragment implements PlayListsAdapter.PlayListsAdapterListener {
-    static final String TAG = "PlayListsFragmentTag";
+    public static final String TAG = "PlayListsFragmentTag";
     static final String PLAY_LISTS_KEY = "play_list_key";
 
     @BindView(R.id.rv_play_lists)
@@ -30,7 +30,7 @@ public class PlayListsFragment extends Fragment implements PlayListsAdapter.Play
     private PlayListsAdapter mAdapter;
     private PlayListsFragmentListener mPlayListsFragmentListener;
 
-    interface PlayListsFragmentListener {
+    public interface PlayListsFragmentListener {
         void onPlayListItemClicked(String playListId);
     }
 
@@ -63,7 +63,7 @@ public class PlayListsFragment extends Fragment implements PlayListsAdapter.Play
     }
 
     private void populatePlayLists() {
-        mAdapter = new PlayListsAdapter(this::onPlayListClicked);
+        mAdapter = new PlayListsAdapter(this::onPlayListClicked, getContext());
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         rvPlayLists.setLayoutManager(layoutManager);
         rvPlayLists.hasFixedSize();

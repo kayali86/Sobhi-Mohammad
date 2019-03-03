@@ -36,7 +36,6 @@ class NotificationUtils {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID_STR, NOTIFICATION_CHANNEL_ID_STR, NotificationManager.IMPORTANCE_HIGH);
             notificationChannel.setDescription(NOTIFICATION_CHANNEL_ID_STR);
-            //Uri uri = Uri.parse("android.resource://"+context.getPackageName()+"/" + R.raw.new_video);
             Uri uri= Settings.System.DEFAULT_NOTIFICATION_URI;
             AudioAttributes audioAttributes = new AudioAttributes.Builder()
                     .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
@@ -55,5 +54,4 @@ class NotificationUtils {
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
         notificationManager.notify(NOTIFICATION_CHANNEL_ID_INT, notification);
     }
-
 }

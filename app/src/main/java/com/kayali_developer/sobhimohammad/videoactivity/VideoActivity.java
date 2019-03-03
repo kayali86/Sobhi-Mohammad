@@ -1,6 +1,7 @@
-package com.kayali_developer.sobhimohammad.main;
+package com.kayali_developer.sobhimohammad.videoactivity;
 
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -19,6 +20,7 @@ import com.kayali_developer.sobhimohammad.data.model.PlayListItemsResponse;
 import com.kayali_developer.sobhimohammad.data.model.VideoStatisticsResponse;
 import com.kayali_developer.sobhimohammad.utilities.MyTextUtils;
 import com.kayali_developer.sobhimohammad.utilities.Prefs;
+import com.kayali_developer.sobhimohammad.utilities.ThemeUtils;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -28,6 +30,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class VideoActivity extends AppCompatActivity implements YouTubePlayer.OnInitializedListener {
+
     public static final String ITEM_KEY = "item_key";
     public static final String VIDEO_STATISTICS_KEY = "video_statistics_key";
     private static final int RECOVERY_DIALOG_REQUEST = 1;
@@ -52,16 +55,16 @@ public class VideoActivity extends AppCompatActivity implements YouTubePlayer.On
     ImageView ivLikes;
     @BindView(R.id.iv_dislikes)
     ImageView ivDislikes;
-    @BindView(R.id.favorite)
-    LinearLayout favorite;
     @BindView(R.id.iv_share)
     ImageView ivShare;
-    @BindView(R.id.share)
-    LinearLayout share;
     @BindView(R.id.line1)
     View line1;
     @BindView(R.id.video_activity_layout)
     LinearLayout videoActivityLayout;
+    @BindView(R.id.tv_favorite)
+    TextView tvFavorite;
+    @BindView(R.id.tv_share)
+    TextView tvShare;
 
 
     private VideoViewModel mViewModel;
@@ -72,6 +75,11 @@ public class VideoActivity extends AppCompatActivity implements YouTubePlayer.On
         setContentView(R.layout.activity_video);
         ButterKnife.bind(this);
         mViewModel = ViewModelProviders.of(this).get(VideoViewModel.class);
+        tvItemTitle.setTextColor(ThemeUtils.getThemePrimaryColor(this));
+        tvFavorite.setTextColor(ThemeUtils.getThemePrimaryColor(this));
+        tvShare.setTextColor(ThemeUtils.getThemePrimaryColor(this));
+        ivFavorite.setColorFilter(ThemeUtils.getThemePrimaryColor(this));
+        ivShare.setColorFilter(ThemeUtils.getThemePrimaryColor(this));
         checkIntent();
         checkDarkMode();
         YouTubePlayerFragment youTubePlayerFragment =
@@ -146,12 +154,12 @@ public class VideoActivity extends AppCompatActivity implements YouTubePlayer.On
             tvDislikes.setTextColor(getResources().getColor(R.color.lightTextColor));
             tvItemDescription.setTextColor(getResources().getColor(R.color.lightTextColor));
             tvItemTitle.setTextColor(getResources().getColor(R.color.lightTextColor));
-            ivFavorite.setColorFilter(ContextCompat.getColor(this, R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
+            ivFavorite.setColorFilter(ThemeUtils.getThemePrimaryColor(this), PorterDuff.Mode.SRC_IN);
             line2.setBackgroundColor(getResources().getColor(R.color.lightTextColor));
-            ivViewCount.setColorFilter(ContextCompat.getColor(this, R.color.lightTextColor), android.graphics.PorterDuff.Mode.SRC_IN);
-            ivLikes.setColorFilter(ContextCompat.getColor(this, R.color.lightTextColor), android.graphics.PorterDuff.Mode.SRC_IN);
-            ivDislikes.setColorFilter(ContextCompat.getColor(this, R.color.lightTextColor), android.graphics.PorterDuff.Mode.SRC_IN);
-            ivShare.setColorFilter(ContextCompat.getColor(this, R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
+            ivViewCount.setColorFilter(ContextCompat.getColor(this, R.color.lightTextColor), PorterDuff.Mode.SRC_IN);
+            ivLikes.setColorFilter(ContextCompat.getColor(this, R.color.lightTextColor), PorterDuff.Mode.SRC_IN);
+            ivDislikes.setColorFilter(ContextCompat.getColor(this, R.color.lightTextColor), PorterDuff.Mode.SRC_IN);
+            ivShare.setColorFilter(ThemeUtils.getThemePrimaryColor(this), PorterDuff.Mode.SRC_IN);
             line1.setBackgroundColor(getResources().getColor(R.color.lightTextColor));
         }
     }
@@ -179,17 +187,17 @@ public class VideoActivity extends AppCompatActivity implements YouTubePlayer.On
             ivFavorite.setImageResource(R.drawable.ic_heart_outline);
             boolean success = mViewModel.removeFromFavorites(mViewModel.getCurrentItem().getId());
             if (success) {
-                showToastMessage("Removed");
+                showToastMessage(getString(R.string.removed_from_favorites));
             } else {
-                showToastMessage("Error");
+                showToastMessage(getString(R.string.removing_error));
             }
         } else {
             ivFavorite.setImageResource(R.drawable.ic_heart);
             boolean success = mViewModel.addToFavorites(mViewModel.getCurrentItem());
             if (success) {
-                showToastMessage("Added");
+                showToastMessage(getString(R.string.added_to_favorites));
             } else {
-                showToastMessage("Error");
+                showToastMessage(getString(R.string.adding_error));
             }
         }
     }
@@ -200,7 +208,7 @@ public class VideoActivity extends AppCompatActivity implements YouTubePlayer.On
         sharingIntent.setType("text/plain");
         String shareBody = "https://www.youtube.com/watch?v=" + mViewModel.getCurrentItem().getSnippet().getResourceId().getVideoId();
         sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
-        startActivity(Intent.createChooser(sharingIntent, "Share via"));
+        startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_via)));
     }
 
     private void showToastMessage(String message) {

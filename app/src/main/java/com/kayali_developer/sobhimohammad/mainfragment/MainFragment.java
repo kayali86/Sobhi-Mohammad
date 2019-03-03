@@ -1,4 +1,4 @@
-package com.kayali_developer.sobhimohammad.main;
+package com.kayali_developer.sobhimohammad.mainfragment;
 
 import android.content.Context;
 import android.graphics.PorterDuff;
@@ -12,6 +12,8 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.kayali_developer.sobhimohammad.R;
 import com.kayali_developer.sobhimohammad.data.model.PlayListsResponse;
+import com.kayali_developer.sobhimohammad.mainactivity.MainActivity;
+import com.kayali_developer.sobhimohammad.mainactivity.Themes;
 import com.kayali_developer.sobhimohammad.utilities.Prefs;
 
 import androidx.annotation.NonNull;
@@ -24,12 +26,9 @@ import butterknife.Unbinder;
 
 public class MainFragment extends Fragment {
     public static final String TAG = "MainFragmentTag";
-    public static final String TAB_INDEX_KEY = "tab_index_key";
     public static final int NEW_VIDEOS_TAB_INDEX = 0;
     public static final int PLAY_LISTS_TAB_INDEX = 1;
     public static final int FAVORITE_VIDEOS_TAB_INDEX = 2;
-
-    int mCurrentTab;
 
     @BindView(R.id.iv_show_new_videos)
     ImageView ivShowNewVideos;
@@ -51,9 +50,9 @@ public class MainFragment extends Fragment {
     TextView tvShowFavoritesVideos;
     private MainActivity mActivity;
 
-    FavoriteVideosFragment mFavoriteVideosFragment;
-    PlayListsFragment mPlayListsFragment;
-    NewVideosFragment mNewVideosFragment;
+    public FavoriteVideosFragment mFavoriteVideosFragment;
+    public PlayListsFragment mPlayListsFragment;
+    public NewVideosFragment mNewVideosFragment;
 
     public interface MainFragmentListener {
         void onNewVideosTabClicked();
@@ -81,42 +80,22 @@ public class MainFragment extends Fragment {
         unbinder = ButterKnife.bind(this, rootView);
 
         checkTheme();
-        if (getArguments() != null) {
-            switch (getArguments().getInt(TAB_INDEX_KEY)) {
 
-                case MainFragment.NEW_VIDEOS_TAB_INDEX:
-                    showNewVideosFragment();
-                    break;
+        switch (mActivity.mViewModel.lastSelectedTabInMainFragment) {
 
-                case MainFragment.PLAY_LISTS_TAB_INDEX:
-                    showPlayListsFragment();
-                    break;
+            case MainFragment.NEW_VIDEOS_TAB_INDEX:
+                showNewVideosFragment();
+                break;
 
-                case MainFragment.FAVORITE_VIDEOS_TAB_INDEX:
-                    showFavoritesVideosFragment();
-                    break;
-            }
-        } else if (savedInstanceState != null) {
-            int index = savedInstanceState.getInt(TAB_INDEX_KEY);
-            if (index != -1) {
-                switch (index) {
+            case MainFragment.PLAY_LISTS_TAB_INDEX:
+                showPlayListsFragment();
+                break;
 
-                    case MainFragment.NEW_VIDEOS_TAB_INDEX:
-                        showNewVideosFragment();
-                        break;
-
-                    case MainFragment.PLAY_LISTS_TAB_INDEX:
-                        showPlayListsFragment();
-                        break;
-
-                    case MainFragment.FAVORITE_VIDEOS_TAB_INDEX:
-                        showFavoritesVideosFragment();
-                        break;
-                }
-            }
-        } else {
-            showNewVideosFragment();
+            case MainFragment.FAVORITE_VIDEOS_TAB_INDEX:
+                showFavoritesVideosFragment();
+                break;
         }
+
         return rootView;
     }
 
@@ -161,28 +140,28 @@ public class MainFragment extends Fragment {
         tvShowPlayLists.setTextColor(color);
     }
 
-    void showNewVideosFragment() {
-        mCurrentTab = NEW_VIDEOS_TAB_INDEX;
+    public void showNewVideosFragment() {
+        mActivity.mViewModel.lastSelectedTabInMainFragment = NEW_VIDEOS_TAB_INDEX;
         removeAllFragmentsInMainFragment();
         initializeNewVideosFragment();
-        mActivity.mFragmentManager.beginTransaction().replace(R.id.main_fragment_fragment_container, mNewVideosFragment, ItemsFragment.NEW_VIDEOS_FRAGMENT_TAG).commitAllowingStateLoss();
+        mActivity.mFragmentManager.beginTransaction().replace(R.id.main_fragment_fragment_container, mNewVideosFragment, NewVideosFragment.TAG).commitAllowingStateLoss();
         newVideosLine.setVisibility(View.VISIBLE);
         playListsLine.setVisibility(View.GONE);
         favoriteVideosLine.setVisibility(View.GONE);
     }
 
-    void showPlayListsFragment() {
-        mCurrentTab = PLAY_LISTS_TAB_INDEX;
+    public void showPlayListsFragment() {
+        mActivity.mViewModel.lastSelectedTabInMainFragment = PLAY_LISTS_TAB_INDEX;
         removeAllFragmentsInMainFragment();
         initializePlayListsFragment();
-        mActivity.mFragmentManager.beginTransaction().replace(R.id.main_fragment_fragment_container, mPlayListsFragment, PlayListsFragment.TAG).commitAllowingStateLoss();
+        mActivity.mFragmentManager.beginTransaction().add(R.id.main_fragment_fragment_container, mPlayListsFragment, PlayListsFragment.TAG).commitAllowingStateLoss();
         newVideosLine.setVisibility(View.GONE);
         playListsLine.setVisibility(View.VISIBLE);
         favoriteVideosLine.setVisibility(View.GONE);
     }
 
-    void showFavoritesVideosFragment() {
-        mCurrentTab = FAVORITE_VIDEOS_TAB_INDEX;
+    public void showFavoritesVideosFragment() {
+        mActivity.mViewModel.lastSelectedTabInMainFragment = FAVORITE_VIDEOS_TAB_INDEX;
         removeAllFragmentsInMainFragment();
         initializeFavoritesVideosFragment();
         mActivity.mFragmentManager.beginTransaction().replace(R.id.main_fragment_fragment_container, mFavoriteVideosFragment, FavoriteVideosFragment.TAG).commitAllowingStateLoss();
@@ -192,7 +171,7 @@ public class MainFragment extends Fragment {
     }
 
 
-    void initializeNewVideosFragment() {
+    private void initializeNewVideosFragment() {
         mNewVideosFragment = new NewVideosFragment();
         if (mActivity.mViewModel.getNewVideos() != null && mActivity.mViewModel.getNewVideos().size() > 0) {
             Bundle bundle = new Bundle();
@@ -281,11 +260,6 @@ public class MainFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putInt(TAB_INDEX_KEY, mCurrentTab);
-        super.onSaveInstanceState(outState);
-    }
 
     @Override
     public void onAttach(@NonNull Context context) {

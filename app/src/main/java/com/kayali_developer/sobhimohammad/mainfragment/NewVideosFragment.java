@@ -1,4 +1,4 @@
-package com.kayali_developer.sobhimohammad.main;
+package com.kayali_developer.sobhimohammad.mainfragment;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -24,12 +24,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class ItemsFragment extends Fragment implements ItemsAdapter.ItemsAdapterListener {
-    static final String NEW_VIDEOS_FRAGMENT_TAG = "NEW_VIDEOS_FRAGMENT_TAG";
-    static final String PLAY_LIST_ITEMS_FRAGMENT_TAG = "PLAY_LIST_ITEMS_FRAGMENT_TAG";
-    static final String PLAY_LIST_ITEMS_RESPONSE_KEY = "play_list_items_response_key";
+public class NewVideosFragment extends Fragment implements ItemsAdapter.ItemsAdapterListener {
 
-    ItemsAdapter mAdapter;
+    public static final String TAG = "NewVideosFragmentTag";
+    static final String NEW_VIDEOS_RESPONSE_KEY = "new_videos_response_key";
 
     @BindView(R.id.rv_play_list_items)
     RecyclerView rvPlayListItems;
@@ -37,17 +35,13 @@ public class ItemsFragment extends Fragment implements ItemsAdapter.ItemsAdapter
     LinearLayout noItemsView;
     private Unbinder unbinder;
 
-    public ItemsFragment() {
+    private NewVideosFragmentListener mNewVideosFragmentListener;
+
+    public interface NewVideosFragmentListener {
+        void onPlayListItemClicked(PlayListItemsResponse.Item item);
     }
 
-    private ItemsFragmentListener mItemsFragmentListener;
-
-    public interface ItemsFragmentListener {
-        void onPlayListItemClicked(PlayListItemsResponse.Item item);
-
-        void onItemsFragmentAttached();
-
-        void onItemsFragmentDetached();
+    public NewVideosFragment() {
     }
 
     @Nullable
@@ -58,7 +52,7 @@ public class ItemsFragment extends Fragment implements ItemsAdapter.ItemsAdapter
         if (getArguments() != null) {
             List<PlayListItemsResponse.Item> items;
 
-            String responseStr = getArguments().getString(PLAY_LIST_ITEMS_RESPONSE_KEY);
+            String responseStr = getArguments().getString(NEW_VIDEOS_RESPONSE_KEY);
             if (responseStr != null) {
                 TypeToken<List<PlayListItemsResponse.Item>> token = new TypeToken<List<PlayListItemsResponse.Item>>() {
                 };
@@ -74,13 +68,9 @@ public class ItemsFragment extends Fragment implements ItemsAdapter.ItemsAdapter
         return rootView;
     }
 
-    static ItemsFragment newInstance() {
-        return new ItemsFragment();
-    }
-
-    void populatePlayLists(List<PlayListItemsResponse.Item> items) {
+    private void populatePlayLists(List<PlayListItemsResponse.Item> items) {
         if (items != null && items.size() > 0) {
-            mAdapter = new ItemsAdapter(this::onPlayListItemClicked);
+            ItemsAdapter mAdapter = new ItemsAdapter(this::onPlayListItemClicked);
             LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
             rvPlayListItems.setLayoutManager(layoutManager);
             rvPlayListItems.hasFixedSize();
@@ -93,7 +83,7 @@ public class ItemsFragment extends Fragment implements ItemsAdapter.ItemsAdapter
 
     @Override
     public void onPlayListItemClicked(PlayListItemsResponse.Item item) {
-        mItemsFragmentListener.onPlayListItemClicked(item);
+        mNewVideosFragmentListener.onPlayListItemClicked(item);
     }
 
     @Override
@@ -105,13 +95,7 @@ public class ItemsFragment extends Fragment implements ItemsAdapter.ItemsAdapter
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        mItemsFragmentListener = (ItemsFragmentListener) context;
-        mItemsFragmentListener.onItemsFragmentAttached();
+        mNewVideosFragmentListener = (NewVideosFragmentListener) context;
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mItemsFragmentListener.onItemsFragmentDetached();
-    }
 }

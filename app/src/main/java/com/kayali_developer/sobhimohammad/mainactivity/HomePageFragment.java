@@ -1,4 +1,4 @@
-package com.kayali_developer.sobhimohammad.main;
+package com.kayali_developer.sobhimohammad.mainactivity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -22,7 +22,9 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 public class HomePageFragment extends Fragment {
+
     public static final String TAG = "HomePageFragmentTag";
+
     @BindView(R.id.web_view)
     WebView webView;
 
@@ -31,15 +33,10 @@ public class HomePageFragment extends Fragment {
 
     interface HomePageFragmentListener {
         void onHomePageFragmentAttached();
-
         void onHomePageFragmentDetached();
     }
 
     public HomePageFragment() {
-    }
-
-    public static HomePageFragment newInstance() {
-        return new HomePageFragment();
     }
 
     @Nullable
@@ -65,7 +62,6 @@ public class HomePageFragment extends Fragment {
                 return false;
             }
     }
-
 }
 
     @Override

@@ -10,9 +10,11 @@ import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.kayali_developer.sobhimohammad.main.MainActivity;
-import com.kayali_developer.sobhimohammad.main.Themes;
-import com.kayali_developer.sobhimohammad.utilities.Prefs;
+import com.kayali_developer.sobhimohammad.aboutus.AboutUsActivity;
+import com.kayali_developer.sobhimohammad.mainactivity.MainActivity;
+import com.kayali_developer.sobhimohammad.settings.SettingsActivity;
+import com.kayali_developer.sobhimohammad.videoactivity.VideoActivity;
+import com.kayali_developer.sobhimohammad.utilities.ThemeUtils;
 
 public class MyApp extends Application {
     @Override
@@ -58,61 +60,12 @@ public class MyApp extends Application {
 
     private void checkTheme(Activity activity) {
         if (activity instanceof MainActivity){
-            int primaryColor = getResources().getColor(R.color.colorPrimary);
-            int primaryColorDark = getResources().getColor(R.color.colorPrimaryDark);
-            int cycle_gradient_id = R.drawable.cyrcle_gradient;
-            int gradient_id = R.drawable.gradient;
+            int primaryColor = ThemeUtils.getThemePrimaryColor(activity);
+            int primaryColorDark = ThemeUtils.getThemePrimaryColorDark(activity);
 
-            Themes theme = Prefs.getCurrentTheme(activity);
-
-            switch (theme){
-
-                case RED:
-                    primaryColor = getResources().getColor(R.color.redColorPrimary);
-                    primaryColorDark = getResources().getColor(R.color.redColorPrimaryDark);
-                    cycle_gradient_id = R.drawable.cyrcle_gradient_red;
-                    gradient_id = R.drawable.gradient_red;
-                    break;
-
-                case GREEN:
-                    primaryColor = getResources().getColor(R.color.greenColorPrimary);
-                    primaryColorDark = getResources().getColor(R.color.greenColorPrimaryDark);
-                    cycle_gradient_id = R.drawable.cyrcle_gradient_green;
-                    gradient_id = R.drawable.gradient_green;
-                    break;
-
-                case BLUE:
-                    primaryColor = getResources().getColor(R.color.blueColorPrimary);
-                    primaryColorDark = getResources().getColor(R.color.blueColorPrimaryDark);
-                    cycle_gradient_id = R.drawable.cyrcle_gradient_blue;
-                    gradient_id = R.drawable.gradient_blue;
-                    break;
-
-                case BROWN:
-                    primaryColor = getResources().getColor(R.color.brownColorPrimary);
-                    primaryColorDark = getResources().getColor(R.color.brownColorPrimaryDark);
-                    cycle_gradient_id = R.drawable.cyrcle_gradient_brown;
-                    gradient_id = R.drawable.gradient_brown;
-                    break;
-
-                case PURPLE:
-                    primaryColor = getResources().getColor(R.color.colorPrimary);
-                    primaryColorDark = getResources().getColor(R.color.colorPrimaryDark);
-                    cycle_gradient_id = R.drawable.cyrcle_gradient;
-                    gradient_id = R.drawable.gradient;
-                    break;
-
-                case YELLOW:
-                    primaryColor = getResources().getColor(R.color.yellowColorPrimary);
-                    primaryColorDark = getResources().getColor(R.color.yellowColorPrimaryDark);
-                    cycle_gradient_id = R.drawable.cyrcle_gradient_yellow;
-                    gradient_id = R.drawable.gradient_yellow;
-                    break;
-
-            }
             MainActivity mainActivity = ((MainActivity) activity);
-            mainActivity.mNavigationView.getHeaderView(0).setBackgroundResource(cycle_gradient_id);
-            mainActivity.mNavigationView.setBackgroundResource(gradient_id);
+            mainActivity.mNavigationView.getHeaderView(0).setBackground(ThemeUtils.getThemeGradientCyrcle(activity));
+            mainActivity.mNavigationView.setBackground(ThemeUtils.getThemeGradient(activity));
 
             if (mainActivity.getSupportActionBar() != null){
                 mainActivity.getSupportActionBar().setBackgroundDrawable(new ColorDrawable(primaryColor));
@@ -166,6 +119,42 @@ public class MyApp extends Application {
             mainActivity.mNavigationView.setItemIconTintList(csl2);
 
             //mainActivity.mNavigationView.setItemBackgroundResource(R.drawable.gradient_red);
+        }
+        else if (activity instanceof AboutUsActivity){
+            AboutUsActivity aboutUsActivity = ((AboutUsActivity) activity);
+            if (aboutUsActivity.getSupportActionBar() != null){
+                aboutUsActivity.getSupportActionBar().setBackgroundDrawable(new ColorDrawable(ThemeUtils.getThemePrimaryColor(aboutUsActivity)));
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                Window window = aboutUsActivity.getWindow();
+                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                window.setStatusBarColor(ThemeUtils.getThemePrimaryColorDark(aboutUsActivity));
+            }
+        }
+        else if (activity instanceof VideoActivity){
+            VideoActivity videoActivity = ((VideoActivity) activity);
+            if (videoActivity.getSupportActionBar() != null){
+                videoActivity.getSupportActionBar().setBackgroundDrawable(new ColorDrawable(ThemeUtils.getThemePrimaryColor(videoActivity)));
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                Window window = videoActivity.getWindow();
+                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                window.setStatusBarColor(ThemeUtils.getThemePrimaryColorDark(videoActivity));
+            }
+        }
+        else if (activity instanceof SettingsActivity){
+            SettingsActivity settingsActivity = ((SettingsActivity) activity);
+            if (settingsActivity.getSupportActionBar() != null){
+                settingsActivity.getSupportActionBar().setBackgroundDrawable(new ColorDrawable(ThemeUtils.getThemePrimaryColor(settingsActivity)));
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                Window window = settingsActivity.getWindow();
+                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                window.setStatusBarColor(ThemeUtils.getThemePrimaryColorDark(settingsActivity));
+            }
         }
     }
 }

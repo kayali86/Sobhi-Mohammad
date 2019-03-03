@@ -1,4 +1,4 @@
-package com.kayali_developer.sobhimohammad.main;
+package com.kayali_developer.sobhimohammad.mainactivity;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -22,7 +22,9 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 
 public class ChangeThemeFragment extends Fragment {
+
     public static final String TAG = "ChangeThemeFragmentTag";
+
     @BindView(R.id.purple_theme)
     View purpleTheme;
     @BindView(R.id.red_theme)
@@ -36,7 +38,6 @@ public class ChangeThemeFragment extends Fragment {
     @BindView(R.id.blue_theme)
     View blueTheme;
 
-
     private Unbinder unbinder;
     private ChangeThemeFragmentListener fragmentListener;
 
@@ -49,19 +50,14 @@ public class ChangeThemeFragment extends Fragment {
     public ChangeThemeFragment() {
     }
 
-    public static ChangeThemeFragment newInstance() {
-        return new ChangeThemeFragment();
-    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_change_theme, container, false);
         unbinder = ButterKnife.bind(this, rootView);
-
         return rootView;
     }
-
 
     @Override
     public void onDestroyView() {
@@ -132,7 +128,7 @@ public class ChangeThemeFragment extends Fragment {
                         }
                     }
                 };
-        showConfirmDialog(positiveButtonClickListener, "You should restart the App to apply new changes!", "Restart", "Not now");
+        showConfirmDialog(positiveButtonClickListener, getString(R.string.restart_app_warning), getString(R.string.restart), getString(R.string.not_now));
     }
 
     // Display an alert dialog
@@ -151,5 +147,4 @@ public class ChangeThemeFragment extends Fragment {
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
-
 }

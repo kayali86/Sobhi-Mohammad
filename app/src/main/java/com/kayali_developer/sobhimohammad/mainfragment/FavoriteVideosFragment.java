@@ -1,4 +1,4 @@
-package com.kayali_developer.sobhimohammad.main;
+package com.kayali_developer.sobhimohammad.mainfragment;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 
 import com.kayali_developer.sobhimohammad.R;
 import com.kayali_developer.sobhimohammad.data.model.PlayListItemsResponse;
+import com.kayali_developer.sobhimohammad.mainactivity.MainActivity;
 
 import java.util.List;
 
@@ -23,9 +24,10 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 public class FavoriteVideosFragment extends Fragment implements FavoriteItemsAdapter.FavoriteItemsAdapterListener {
-    static final String TAG = "FAVORITE_VIDEOS_FRAGMENT_TAG";
 
-    FavoriteItemsAdapter mAdapter;
+    public static final String TAG = "FAVORITE_VIDEOS_FRAGMENT_TAG";
+
+    public FavoriteItemsAdapter mAdapter;
 
     @BindView(R.id.rv_play_list_items)
     RecyclerView rvPlayListItems;
@@ -64,7 +66,7 @@ public class FavoriteVideosFragment extends Fragment implements FavoriteItemsAda
         return new FavoriteVideosFragment();
     }
 
-    void populatePlayLists(List<PlayListItemsResponse.Item> items) {
+    private void populatePlayLists(List<PlayListItemsResponse.Item> items) {
         if (items != null && items.size() > 0) {
             mAdapter = new FavoriteItemsAdapter(this);
             LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());

@@ -1,4 +1,4 @@
-package com.kayali_developer.sobhimohammad.main;
+package com.kayali_developer.sobhimohammad.aboutus;
 
 import android.content.Context;
 import android.content.Intent;
@@ -7,18 +7,39 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.kayali_developer.sobhimohammad.R;
+import com.kayali_developer.sobhimohammad.utilities.ThemeUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
 public class AboutUsFragment extends Fragment {
     public static final String TAG = "AboutUsFragmentTag";
+    @BindView(R.id.tv_developer_website)
+    TextView tvDeveloperWebsite;
+    @BindView(R.id.iv_facebook)
+    ImageView ivFacebook;
+    @BindView(R.id.iv_facebook2)
+    ImageView ivFacebook2;
+    @BindView(R.id.iv_youtube)
+    ImageView ivYoutube;
+    @BindView(R.id.iv_twitter)
+    ImageView ivTwitter;
+    @BindView(R.id.iv_instagram)
+    ImageView ivInstagram;
+    @BindView(R.id.iv_google_play)
+    ImageView ivGooglePlay;
+    @BindView(R.id.about_us_fragment_layout)
+    ConstraintLayout aboutUsFragmentLayout;
 
     private Unbinder unbinder;
     private AboutUsActivity mActivity;
@@ -29,18 +50,27 @@ public class AboutUsFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_about_us, container, false);
         unbinder = ButterKnife.bind(this, rootView);
 
+        aboutUsFragmentLayout.setBackground(ThemeUtils.getThemeGradient(rootView.getContext()));
 
+        tvDeveloperWebsite.setTextColor(ThemeUtils.getThemePrimaryColorDark(rootView.getContext()));
+
+        ivFacebook.setColorFilter(ThemeUtils.getThemePrimaryColor(rootView.getContext()));
+        ivFacebook2.setColorFilter(ThemeUtils.getThemePrimaryColor(rootView.getContext()));
+        ivYoutube.setColorFilter(ThemeUtils.getThemePrimaryColor(rootView.getContext()));
+        ivTwitter.setColorFilter(ThemeUtils.getThemePrimaryColor(rootView.getContext()));
+        ivInstagram.setColorFilter(ThemeUtils.getThemePrimaryColor(rootView.getContext()));
+        ivGooglePlay.setColorFilter(ThemeUtils.getThemePrimaryColor(rootView.getContext()));
         return rootView;
     }
 
-    private void openWebSite(String url){
-        if (getActivity() != null){
-            if (!url.startsWith("http://") && !url.startsWith("https://")){
+    private void openWebSite(String url) {
+        if (getActivity() != null) {
+            if (!url.startsWith("http://") && !url.startsWith("https://")) {
                 url = "http://" + url;
             }
 
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-            if (browserIntent.resolveActivity(getActivity().getPackageManager()) != null){
+            if (browserIntent.resolveActivity(getActivity().getPackageManager()) != null) {
                 startActivity(browserIntent);
             }
         }

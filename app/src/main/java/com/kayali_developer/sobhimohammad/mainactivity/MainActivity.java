@@ -1,27 +1,32 @@
-package com.kayali_developer.sobhimohammad.main;
+package com.kayali_developer.sobhimohammad.mainactivity;
 
 
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.kayali_developer.sobhimohammad.LoadingFragment;
 import com.kayali_developer.sobhimohammad.R;
+import com.kayali_developer.sobhimohammad.aboutus.AboutUsActivity;
 import com.kayali_developer.sobhimohammad.data.model.PlayListItemsResponse;
 import com.kayali_developer.sobhimohammad.data.model.VideoStatisticsResponse;
+import com.kayali_developer.sobhimohammad.mainfragment.FavoriteVideosFragment;
+import com.kayali_developer.sobhimohammad.mainfragment.ItemsFragment;
+import com.kayali_developer.sobhimohammad.mainfragment.MainFragment;
+import com.kayali_developer.sobhimohammad.mainfragment.NewVideosFragment;
+import com.kayali_developer.sobhimohammad.mainfragment.PlayListsFragment;
+import com.kayali_developer.sobhimohammad.settings.SettingsActivity;
+import com.kayali_developer.sobhimohammad.videoactivity.VideoActivity;
 
 import java.util.List;
 
@@ -37,7 +42,9 @@ import androidx.lifecycle.ViewModelProviders;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity
+
+        extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         PlayListsFragment.PlayListsFragmentListener,
         ItemsFragment.ItemsFragmentListener,
@@ -46,12 +53,10 @@ public class MainActivity extends AppCompatActivity
         ChangeThemeFragment.ChangeThemeFragmentListener,
         HomePageFragment.HomePageFragmentListener,
         PrivacyPolicyFragment.PrivacyPolicyFragmentListener,
-        NewVideosFragment.NewVideosFragmentListener{
+        NewVideosFragment.NewVideosFragmentListener {
 
-    private Context mContext;
-    MainViewModel mViewModel;
-    FragmentManager mFragmentManager;
-
+    public MainViewModel mViewModel;
+    public FragmentManager mFragmentManager;
     private LoadingFragment mLoadingFragment;
     private HomePageFragment mHomePageFragment;
     private ChangeThemeFragment mChangeThemeFragment;
@@ -71,15 +76,8 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         Timber.plant(new Timber.DebugTree());
-        mContext = MainActivity.this;
         mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
-
-        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(this, instanceIdResult -> {
-            String newToken = instanceIdResult.getToken();
-            Log.e("newToken", newToken);
-
-        });
 
         mDrawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -94,12 +92,11 @@ public class MainActivity extends AppCompatActivity
         if (savedInstanceState == null) {
             initializeLoadingFragment(getString(R.string.loading));
         }
-        mViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         findAllFragments();
+        mViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         observeVariables();
 
     }
-
 
 
     private void observeVariables() {
@@ -108,7 +105,7 @@ public class MainActivity extends AppCompatActivity
             public void onChanged(List<PlayListItemsResponse.Item> items) {
                 mViewModel.setNewVideos(items);
                 if (items != null && items.size() > 0) {
-                    initializeMainFragment(MainFragment.NEW_VIDEOS_TAB_INDEX);
+                    initializeMainFragment(mViewModel.lastSelectedTabInMainFragment);
                 }
             }
         });
@@ -142,10 +139,10 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    private void findAllFragments(){
-        for (Fragment fragment : mFragmentManager.getFragments()){
-            if (fragment != null && fragment.getTag() != null){
-                switch (fragment.getTag()){
+    private void findAllFragments() {
+        for (Fragment fragment : mFragmentManager.getFragments()) {
+            if (fragment != null && fragment.getTag() != null) {
+                switch (fragment.getTag()) {
                     case MainFragment.TAG:
                         mMainFragment = (MainFragment) mFragmentManager.findFragmentByTag(MainFragment.TAG);
                         break;
@@ -167,78 +164,67 @@ public class MainActivity extends AppCompatActivity
                         break;
 
                     case PlayListsFragment.TAG:
-                        if (mMainFragment != null){
+                        if (mMainFragment != null) {
                             mMainFragment.mPlayListsFragment = (PlayListsFragment) mFragmentManager.findFragmentByTag(PlayListsFragment.TAG);
                         }
                         break;
 
                     case FavoriteVideosFragment.TAG:
-                        if (mMainFragment != null){
+                        if (mMainFragment != null) {
                             mMainFragment.mFavoriteVideosFragment = (FavoriteVideosFragment) mFragmentManager.findFragmentByTag(FavoriteVideosFragment.TAG);
                         }
                         break;
 
                     case NewVideosFragment.TAG:
-                        if (mMainFragment != null){
+                        if (mMainFragment != null) {
                             mMainFragment.mNewVideosFragment = (NewVideosFragment) mFragmentManager.findFragmentByTag(NewVideosFragment.TAG);
                         }
+
+                    case PrivacyPolicyFragment.TAG:
+                        mPrivacyPolicyFragment = (PrivacyPolicyFragment) mFragmentManager.findFragmentByTag(PrivacyPolicyFragment.TAG);
                         break;
                 }
             }
         }
     }
 
-
-
     @Override
     public void onPlayListItemClicked(String playListId) {
-        initializePlayListItemsFragment(mViewModel.getPlaylistItems(playListId));
+        initializePlayListItemsFragment(mViewModel.getPlaylistItems(playListId), mViewModel.getPlaylistTitle(playListId));
     }
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer =  findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+        } else if ((mChangeThemeFragment == null || !mChangeThemeFragment.isAdded()) &&
+                (mPrivacyPolicyFragment == null || !mPrivacyPolicyFragment.isAdded()) &&
+                (mPlayListItemsFragment == null || !mPlayListItemsFragment.isAdded()) &&
+                (mHomePageFragment == null || !mHomePageFragment.isAdded())) {
+
+            DialogInterface.OnClickListener discardButtonClickListener =
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            finishAffinity();
+                        }
+                    };
+            showAppClosingConfirmDialog(discardButtonClickListener, getString(R.string.close_app_warning), getString(R.string.close), getString(R.string.back));
+
         } else {
-            if (mViewModel.itemsToDelete.size() > 0){
-                abortDeletion();
-            }
-
-            else if (mHomePageFragment != null && mHomePageFragment.isAdded()){
-                super.onBackPressed();
-            }
-
-            else if (mChangeThemeFragment != null && mChangeThemeFragment.isAdded()){
-                super.onBackPressed();
-            }
-
-            else if (mPrivacyPolicyFragment != null && mPrivacyPolicyFragment.isAdded()){
-                super.onBackPressed();
-            }
-
-            else{
-                DialogInterface.OnClickListener discardButtonClickListener =
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                finishAffinity();
-                            }
-                        };
-                showAppClosingConfirmDialog(discardButtonClickListener, "Do you want to close the App?", "Close", "BAck");
-            }
-
+            super.onBackPressed();
         }
     }
 
     private void abortDeletion() {
         mViewModel.itemsToDelete.clear();
-        if (deleteMenuItem.isVisible()){
+        if (deleteMenuItem.isVisible()) {
             deleteMenuItem.setVisible(false);
         }
-        if (mMainFragment != null && mMainFragment.mFavoriteVideosFragment != null && mMainFragment.mFavoriteVideosFragment.mAdapter != null){
+        if (mMainFragment != null && mMainFragment.mFavoriteVideosFragment != null && mMainFragment.mFavoriteVideosFragment.mAdapter != null) {
             for (PlayListItemsResponse.Item item : mMainFragment.mFavoriteVideosFragment.mAdapter.getAllItems())
-            item.setSelected(false);
+                item.setSelected(false);
             mMainFragment.mFavoriteVideosFragment.mAdapter.notifyDataSetChanged();
         }
     }
@@ -251,7 +237,7 @@ public class MainActivity extends AppCompatActivity
         builder.setNegativeButton(negativeButtonCaption, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 if (dialog != null) {
-                    if (mViewModel.itemsToDelete.size() > 0){
+                    if (mViewModel.itemsToDelete.size() > 0) {
                         abortDeletion();
                     }
                     dialog.dismiss();
@@ -287,62 +273,55 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_new_videos) {
-            if (mMainFragment == null || !mMainFragment.isDetached()){
+            if (mMainFragment == null || !mMainFragment.isDetached()) {
                 initializeMainFragment(MainFragment.NEW_VIDEOS_TAB_INDEX);
-            }else{
+            } else {
                 mMainFragment.showNewVideosFragment();
             }
 
         } else if (id == R.id.nav_play_lists) {
-            if (mMainFragment == null || !mMainFragment.isDetached()){
+            if (mMainFragment == null || !mMainFragment.isDetached()) {
                 initializeMainFragment(MainFragment.PLAY_LISTS_TAB_INDEX);
-            }else{
+            } else {
                 mMainFragment.showPlayListsFragment();
             }
 
         } else if (id == R.id.nav_favorites_videos) {
-            if (mMainFragment == null || !mMainFragment.isDetached()){
+            if (mMainFragment == null || !mMainFragment.isDetached()) {
                 initializeMainFragment(MainFragment.FAVORITE_VIDEOS_TAB_INDEX);
-            }else{
+            } else {
                 mMainFragment.showFavoritesVideosFragment();
             }
 
-        }
-        else if (id == R.id.nav_change_theme) {
+        } else if (id == R.id.nav_change_theme) {
             initializeChangeThemeFragment();
-        }
-        else if (id == R.id.nav_settings) {
+        } else if (id == R.id.nav_settings) {
             showSettings();
-        }
-        else if (id == R.id.nav_privacy_policy) {
+        } else if (id == R.id.nav_privacy_policy) {
             initializePrivacyPolicyFragment();
-        }
-        else if (id == R.id.nav_home_page) {
+        } else if (id == R.id.nav_home_page) {
             initializeHomePageFragment();
-        }
-        else if (id == R.id.nav_rate_app) {
+        } else if (id == R.id.nav_rate_app) {
             rateApp();
-        }
-        else if (id == R.id.nav_share_app) {
+        } else if (id == R.id.nav_share_app) {
             shareApp();
-        }
-        else if (id == R.id.nav_about_us) {
+        } else if (id == R.id.nav_about_us) {
             startAboutUsActivity();
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
-    private void showSettings(){
+    private void showSettings() {
         Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
-        if (settingsIntent.resolveActivity(getPackageManager()) != null){
+        if (settingsIntent.resolveActivity(getPackageManager()) != null) {
             startActivity(settingsIntent);
         }
     }
 
-    private void shareApp(){
+    private void shareApp() {
         Intent intentInvite = new Intent(Intent.ACTION_SEND);
         intentInvite.setType("text/plain");
         String body = "https://play.google.com/store/apps/details?id=" + getPackageName();
@@ -369,30 +348,27 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void startAboutUsActivity(){
+    private void startAboutUsActivity() {
         Intent intent = new Intent(MainActivity.this, AboutUsActivity.class);
-        if (intent.resolveActivity(getPackageManager()) != null){
+        if (intent.resolveActivity(getPackageManager()) != null) {
             startActivity(intent);
         }
     }
 
-
     private void initializeLoadingFragment(String message) {
-    mLoadingFragment = new LoadingFragment();
+        mLoadingFragment = new LoadingFragment();
 
         if (message != null) {
             Bundle bundle = new Bundle();
             bundle.putString(LoadingFragment.MESSAGE_KEY, message);
             mLoadingFragment.setArguments(bundle);
         }
-        mFragmentManager.beginTransaction().add(R.id.main_fragment_container, mLoadingFragment, LoadingFragment.TAG).commitAllowingStateLoss();
+        mFragmentManager.beginTransaction().replace(R.id.main_fragment_container, mLoadingFragment, LoadingFragment.TAG).commitAllowingStateLoss();
     }
 
-    private void initializeMainFragment(int tabIndex){
+    private void initializeMainFragment(int tabIndex) {
+        mViewModel.lastSelectedTabInMainFragment = tabIndex;
         mMainFragment = MainFragment.newInstance();
-        Bundle bundle = new Bundle();
-        bundle.putInt(MainFragment.TAB_INDEX_KEY, tabIndex);
-        mMainFragment.setArguments(bundle);
         mFragmentManager.beginTransaction().replace(R.id.main_fragment_container, mMainFragment, MainFragment.TAG).commitAllowingStateLoss();
     }
 
@@ -404,21 +380,27 @@ public class MainActivity extends AppCompatActivity
     private void initializeChangeThemeFragment() {
         mChangeThemeFragment = new ChangeThemeFragment();
         mFragmentManager.beginTransaction().replace(R.id.main_fragment_container, mChangeThemeFragment, ChangeThemeFragment.TAG).addToBackStack(null).commitAllowingStateLoss();
+        mViewModel.lastFragmentTag = ChangeThemeFragment.TAG;
     }
 
     private void initializePrivacyPolicyFragment() {
         mPrivacyPolicyFragment = new PrivacyPolicyFragment();
         mFragmentManager.beginTransaction().replace(R.id.main_fragment_container, mPrivacyPolicyFragment, PrivacyPolicyFragment.TAG).addToBackStack(null).commitAllowingStateLoss();
+        mViewModel.lastFragmentTag = PrivacyPolicyFragment.TAG;
     }
 
-    private void initializePlayListItemsFragment(List<PlayListItemsResponse.Item> items) {
+    private void initializePlayListItemsFragment(List<PlayListItemsResponse.Item> items, String listTitle) {
         mPlayListItemsFragment = new ItemsFragment();
+        Bundle bundle = new Bundle();
         if (items != null && items.size() > 0) {
-            Bundle bundle = new Bundle();
             bundle.putString(ItemsFragment.PLAY_LIST_ITEMS_RESPONSE_KEY, new Gson().toJson(items));
             mPlayListItemsFragment.setArguments(bundle);
         }
+        if (listTitle != null) {
+            bundle.putString(ItemsFragment.PLAY_LIST_TITLE_KEY, listTitle);
+        }
         mFragmentManager.beginTransaction().add(R.id.main_fragment_container, mPlayListItemsFragment, ItemsFragment.PLAY_LIST_ITEMS_FRAGMENT_TAG).addToBackStack(null).commitAllowingStateLoss();
+        mViewModel.lastFragmentTag = ItemsFragment.PLAY_LIST_ITEMS_FRAGMENT_TAG;
     }
 
     @Override
@@ -430,13 +412,13 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onPlayListItemLongClicked(PlayListItemsResponse.Item item) {
-        if (!deleteMenuItem.isVisible()){
+        if (!deleteMenuItem.isVisible()) {
             deleteMenuItem.setVisible(true);
         }
-        if (item.getSelected()){
+        if (item.getSelected()) {
             mViewModel.itemsToDelete.remove(item);
             item.setSelected(false);
-        }else{
+        } else {
             mViewModel.itemsToDelete.add(item);
             item.setSelected(true);
         }
@@ -446,39 +428,44 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onFavoriteVideosFragmentDetached() {
-        if (deleteMenuItem != null){
+        if (deleteMenuItem != null) {
             deleteMenuItem.setVisible(false);
         }
     }
 
     @Override
     public void onItemsFragmentAttached() {
-        backMenuItem.setVisible(true);
+        if (backMenuItem != null) {
+            backMenuItem.setVisible(true);
+        }
     }
 
     @Override
     public void onItemsFragmentDetached() {
-        backMenuItem.setVisible(false);
+        if (backMenuItem != null) {
+            backMenuItem.setVisible(false);
+        }
+        setTitle(getString(R.string.app_name));
     }
 
 
     @Override
     public void onNewVideosTabClicked() {
-        if (mMainFragment != null){
+        if (mMainFragment != null) {
             mMainFragment.showNewVideosFragment();
         }
     }
 
     @Override
     public void onPlayListsTabClicked() {
-        if (mMainFragment != null){
+        if (mMainFragment != null) {
             mMainFragment.showPlayListsFragment();
         }
     }
 
     @Override
     public void onFavoritesVideosTabClicked() {
-        if (mMainFragment != null){
+        if (mMainFragment != null) {
             mViewModel.updateFavoriteItems();
             mMainFragment.showFavoritesVideosFragment();
         }
@@ -488,9 +475,38 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         mViewModel.updateFavoriteItems();
-        if (mMainFragment != null && mMainFragment.mCurrentTab == MainFragment.FAVORITE_VIDEOS_TAB_INDEX){
-            mMainFragment.showFavoritesVideosFragment();
+        switch (mViewModel.lastFragmentTag) {
+
+            case ChangeThemeFragment.TAG:
+                if (mChangeThemeFragment != null){
+                    mFragmentManager.beginTransaction().replace(R.id.main_fragment_container, mChangeThemeFragment, ChangeThemeFragment.TAG).commitAllowingStateLoss();
+
+                }                break;
+
+            case PrivacyPolicyFragment.TAG:
+                if (mPrivacyPolicyFragment != null){
+                    mFragmentManager.beginTransaction().replace(R.id.main_fragment_container, mPrivacyPolicyFragment, PrivacyPolicyFragment.TAG).commitAllowingStateLoss();
+
+                }                break;
+
+            case HomePageFragment.TAG:
+                if (mHomePageFragment != null){
+                    mFragmentManager.beginTransaction().replace(R.id.main_fragment_container, mHomePageFragment, HomePageFragment.TAG).commitAllowingStateLoss();
+
+                }                break;
+
+            default:
+                if (mMainFragment != null){
+                    mFragmentManager.beginTransaction().replace(R.id.main_fragment_container, mMainFragment, MainFragment.TAG).commitAllowingStateLoss();
+
+                }
+                break;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     private void showToastMessage(String message) {
@@ -500,6 +516,11 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         backMenuItem = menu.findItem(R.id.action_back);
+        if ((mChangeThemeFragment != null && mChangeThemeFragment.isAdded() ||
+                mPrivacyPolicyFragment != null && mPrivacyPolicyFragment.isAdded() ||
+                mHomePageFragment != null && mHomePageFragment.isAdded())){
+            backMenuItem.setVisible(true);
+        }
         deleteMenuItem = menu.findItem(R.id.action_delete);
         return super.onPrepareOptionsMenu(menu);
     }
@@ -514,7 +535,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        switch (id){
+        switch (id) {
 
             case R.id.action_back:
                 onBackPressed();
@@ -527,46 +548,26 @@ public class MainActivity extends AppCompatActivity
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 boolean success = mViewModel.removeFavoriteItems(mViewModel.itemsToDelete);
                                 mViewModel.updateFavoriteItems();
-                                if (success){
-                                    if (mMainFragment != null && mMainFragment.mFavoriteVideosFragment != null && mMainFragment.mFavoriteVideosFragment.mAdapter != null){
+                                if (success) {
+                                    if (mMainFragment != null && mMainFragment.mFavoriteVideosFragment != null && mMainFragment.mFavoriteVideosFragment.mAdapter != null) {
                                         mMainFragment.mFavoriteVideosFragment.mAdapter.notifyDataSetChanged();
                                     }
                                     mViewModel.itemsToDelete.clear();
-                                    showToastMessage("Deletion success");
-                                }else{
-                                    showToastMessage("Deletion failed");
+                                    showToastMessage(getString(R.string.deletion_success));
+                                } else {
+                                    showToastMessage(getString(R.string.deletion_failed));
                                 }
-
                             }
                         };
-                showDeletionConfirmDialog(discardButtonClickListener, "Do you want to remove this items from Favorites?", "Remove", "Cancel");
-
-
-
+                showDeletionConfirmDialog(discardButtonClickListener, getString(R.string.remove_from_favorites_warning), getString(R.string.remove), getString(R.string.cancel));
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public void onChangeThemeFragmentAttached() {
-        if (backMenuItem != null){
-            backMenuItem.setVisible(true);
-        }
-        setTitle(getString(R.string.change_theme_title));
-    }
-
-    @Override
-    public void onChangeThemeFragmentDetached() {
-        if (backMenuItem != null){
-            backMenuItem.setVisible(false);
-        }
-        setTitle(getString(R.string.app_name));
-    }
-
-    @Override
     public void onHomePageFragmentAttached() {
-        if (backMenuItem != null){
+        if (backMenuItem != null) {
             backMenuItem.setVisible(true);
         }
         setTitle(getString(R.string.web_site_title));
@@ -574,7 +575,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onHomePageFragmentDetached() {
-        if (backMenuItem != null){
+        if (backMenuItem != null) {
             backMenuItem.setVisible(false);
         }
         setTitle(getString(R.string.app_name));
@@ -582,7 +583,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onPrivacyPolicyFragmentAttached() {
-        if (backMenuItem != null){
+        if (backMenuItem != null) {
             backMenuItem.setVisible(true);
         }
         setTitle(getString(R.string.privacy_policy_fragment_title));
@@ -590,7 +591,23 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onPrivacyPolicyFragmentDetached() {
-        if (backMenuItem != null){
+        if (backMenuItem != null) {
+            backMenuItem.setVisible(false);
+        }
+        setTitle(getString(R.string.app_name));
+    }
+
+    @Override
+    public void onChangeThemeFragmentAttached() {
+        if (backMenuItem != null) {
+            backMenuItem.setVisible(true);
+        }
+        setTitle(getString(R.string.change_theme_title));
+    }
+
+    @Override
+    public void onChangeThemeFragmentDetached() {
+        if (backMenuItem != null) {
             backMenuItem.setVisible(false);
         }
         setTitle(getString(R.string.app_name));

@@ -7,53 +7,53 @@
         <item
             android:id="@+id/nav_new_videos"
             android:icon="@drawable/ic_new_icon"
-            android:title="New Videos" />
+            android:title="@string/new_videos" />
         <item
             android:id="@+id/nav_play_lists"
             android:icon="@drawable/ic_playlist"
-            android:title="Play Lists" />
+            android:title="@string/play_lists"/>
         <item
             android:id="@+id/nav_favorites_videos"
             android:icon="@drawable/ic_heart"
-            android:title="Favorites Videos" />
+            android:title="@string/favorite_videos" />
 
         <item
             android:id="@+id/nav_change_theme"
             android:icon="@drawable/ic_color_lens"
-            android:title="Theme" />
+            android:title="@string/theme"/>
 
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_settings"
-            android:title="Settings" />
+            android:title="@string/settings" />
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="@string/communicate">
         <menu>
             <item
                 android:id="@+id/nav_privacy_policy"
                 android:icon="@drawable/ic_account_box"
-                android:title="Privacy Policy" />
+                android:title="@string/privacy_policy" />
 
             <item
                 android:id="@+id/nav_home_page"
                 android:icon="@drawable/ic_web"
-                android:title="Website" />
+                android:title="@string/website" />
 
             <item
                 android:id="@+id/nav_rate_app"
                 android:icon="@drawable/ic_star"
-                android:title="Rate App" />
+                android:title="@string/rate_app"/>
 
             <item
                 android:id="@+id/nav_share_app"
                 android:icon="@drawable/ic_menu_share"
-                android:title="Share App" />
+                android:title="@string/share_app"/>
 
             <item
                 android:id="@+id/nav_about_us"
                 android:icon="@drawable/ic_info"
-                android:title="About Us" />
+                android:title="@string/about_us"/>
 
         </menu>
     </item>

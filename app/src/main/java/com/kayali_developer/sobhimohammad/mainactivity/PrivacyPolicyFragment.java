@@ -1,4 +1,4 @@
-package com.kayali_developer.sobhimohammad.main;
+package com.kayali_developer.sobhimohammad.mainactivity;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -15,10 +15,10 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 public class PrivacyPolicyFragment extends Fragment {
+
     public static final String TAG = "PrivacyPolicyFragmentTag";
 
     private Unbinder unbinder;
-
     private PrivacyPolicyFragmentListener fragmentListener;
 
     interface PrivacyPolicyFragmentListener{
@@ -29,16 +29,12 @@ public class PrivacyPolicyFragment extends Fragment {
     public PrivacyPolicyFragment() {
     }
 
-    public static PrivacyPolicyFragment newInstance() {
-        return new PrivacyPolicyFragment();
-    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_privacy_policy, container, false);
         unbinder = ButterKnife.bind(this, rootView);
-
 
         return rootView;
     }

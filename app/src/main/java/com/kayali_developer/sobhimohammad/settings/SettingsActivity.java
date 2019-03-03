@@ -1,4 +1,4 @@
-package com.kayali_developer.sobhimohammad.main;
+package com.kayali_developer.sobhimohammad.settings;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -7,6 +7,7 @@ import android.text.TextWatcher;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -14,6 +15,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.kayali_developer.sobhimohammad.R;
 import com.kayali_developer.sobhimohammad.utilities.Prefs;
+import com.kayali_developer.sobhimohammad.utilities.ThemeUtils;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,6 +32,10 @@ public class SettingsActivity extends AppCompatActivity {
     Switch swGeneralNotification;
     @BindView(R.id.sw_dark_mode)
     Switch swDarkMode;
+    @BindView(R.id.tv_new_videos_count_hint)
+    TextView tvNewVideosCountHint;
+    @BindView(R.id.tv_notification_title)
+    TextView tvNotificationTitle;
 
     private Context mContext;
 
@@ -40,9 +46,19 @@ public class SettingsActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         mContext = this;
 
+        tvNewVideosCountHint.setTextColor(ThemeUtils.getThemePrimaryColor(this));
+        tvNotificationTitle.setTextColor(ThemeUtils.getThemePrimaryColor(this));
+
+        etvNewVideosCount.setTextColor(ThemeUtils.getThemePrimaryColorDark(this));
         etvNewVideosCount.setText(String.valueOf(Prefs.getNewVideosCount(mContext)));
+
+        swDarkMode.setHintTextColor(ThemeUtils.getThemePrimaryColorDark(this));
         swDarkMode.setChecked(Prefs.getDarkModeStatus(mContext));
+
+        swNewVideosNotification.setHintTextColor(ThemeUtils.getThemePrimaryColorDark(this));
         swNewVideosNotification.setChecked(Prefs.getNewVideosNotificationStatus(mContext));
+
+        swGeneralNotification.setHintTextColor(ThemeUtils.getThemePrimaryColorDark(this));
         swGeneralNotification.setChecked(Prefs.getGeneralNotificationStatus(mContext));
 
         etvNewVideosCount.addTextChangedListener(new TextWatcher() {
@@ -54,7 +70,7 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 int Count = -1;
-                if (s != null && s.length() > 0){
+                if (s != null && s.length() > 0) {
                     try {
                         count = Integer.valueOf(s.toString());
                     } catch (NumberFormatException e) {
@@ -62,11 +78,11 @@ public class SettingsActivity extends AppCompatActivity {
                     }
                 }
 
-                if (count > 0){
+                if (count > 0) {
                     Prefs.saveNewVideosCount(mContext, count);
-                    showToastMessage("Saved");
-                }else{
-                    showToastMessage("Please enter a valid number!");
+                    showToastMessage(getString(R.string.saved));
+                } else {
+                    showToastMessage(getString(R.string.enter_valid_number));
                 }
             }
 
@@ -86,29 +102,29 @@ public class SettingsActivity extends AppCompatActivity {
         swNewVideosNotification.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
+                if (isChecked) {
                     FirebaseMessaging.getInstance().subscribeToTopic(getString(R.string.new_video_topic))
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (!task.isSuccessful()) {
-                                        showToastMessage("Error");
-                                    }else{
+                                        showToastMessage(getString(R.string.subscription_error));
+                                    } else {
                                         Prefs.setNewVideosNotificationStatus(mContext, true);
-                                        showToastMessage("Success");
+                                        showToastMessage(getString(R.string.subscribed));
                                     }
                                 }
                             });
-                }else{
+                } else {
                     FirebaseMessaging.getInstance().unsubscribeFromTopic(getString(R.string.new_video_topic))
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (!task.isSuccessful()) {
-                                        showToastMessage("Error");
-                                    }else{
+                                        showToastMessage(getString(R.string.unsubscription_error));
+                                    } else {
                                         Prefs.setNewVideosNotificationStatus(mContext, false);
-                                        showToastMessage("Success");
+                                        showToastMessage(getString(R.string.unsubscribed));
                                     }
                                 }
                             });
@@ -119,29 +135,29 @@ public class SettingsActivity extends AppCompatActivity {
         swGeneralNotification.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
+                if (isChecked) {
                     FirebaseMessaging.getInstance().subscribeToTopic(getString(R.string.general_topic))
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (!task.isSuccessful()) {
-                                        showToastMessage("Error");
-                                    }else{
+                                        showToastMessage(getString(R.string.subscription_error));
+                                    } else {
                                         Prefs.setGeneralNotificationStatus(mContext, true);
-                                        showToastMessage("Success");
+                                        showToastMessage(getString(R.string.subscribed));
                                     }
                                 }
                             });
-                }else{
+                } else {
                     FirebaseMessaging.getInstance().unsubscribeFromTopic(getString(R.string.general_topic))
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (!task.isSuccessful()) {
-                                        showToastMessage("Error");
-                                    }else{
+                                        showToastMessage(getString(R.string.unsubscription_error));
+                                    } else {
                                         Prefs.setNewVideosNotificationStatus(mContext, false);
-                                        showToastMessage("Success");
+                                        showToastMessage(getString(R.string.unsubscribed));
                                     }
                                 }
                             });
@@ -149,7 +165,6 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
     }
-
 
     private void showToastMessage(String message) {
         Toast.makeText(getApplication(), message, Toast.LENGTH_SHORT).show();
