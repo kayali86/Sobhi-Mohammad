@@ -67,6 +67,7 @@ public class ItemsFragment extends Fragment implements ItemsAdapter.ItemsAdapter
             if (mTitle != null && mActivity != null){
                 mActivity.setTitle(mTitle);
             }
+
             List<PlayListItemsResponse.Item> items;
 
             String responseStr = getArguments().getString(PLAY_LIST_ITEMS_RESPONSE_KEY);
@@ -107,6 +108,12 @@ public class ItemsFragment extends Fragment implements ItemsAdapter.ItemsAdapter
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        if (mActivity != null){
+            mActivity.setTitle(getString(R.string.app_name));
+            if (mActivity.backMenuItem != null){
+                mActivity.backMenuItem.setVisible(false);
+            }
+        }
         unbinder.unbind();
     }
 

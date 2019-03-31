@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient"
+    android:id="@+id/about_us_fragment_layout"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:background="@drawable/field_background"
+        android:layout_margin="@dimen/small_margin"
+        android:padding="2dp"
+        app:layout_constraintBottom_toTopOf="@+id/icons_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/about_us_image_layout"
+        android:layout_width="240dp"
+        android:layout_height="0dp">
+
+    <ImageView
+        android:id="@+id/iv_about_us_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:scaleType="centerCrop"
+        android:src="@drawable/splash_screen_image" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:paddingBottom="@dimen/mini_margin"
+        android:layout_margin="@dimen/small_margin"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/field_background"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/about_us_image_layout"
+        app:layout_constraintBottom_toTopOf="@+id/icons_layout">
+
+        <ScrollView
+            android:id="@+id/content_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/small_margin"
+
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/normal_margin"
+                    android:paddingTop="@dimen/small_margin"
+                    android:paddingEnd="@dimen/normal_margin"
+                    android:paddingBottom="@dimen/mini_margin"
+                    android:text="@string/sobhi_mohammad_translatable"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/header_text_size"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/normal_margin"
+                    android:paddingEnd="@dimen/normal_margin"
+                    android:paddingBottom="@dimen/small_margin"
+                    android:text="@string/version"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/text_size" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/normal_margin"
+                    android:paddingEnd="@dimen/normal_margin"
+                    android:paddingBottom="@dimen/mini_margin"
+                    android:text="@string/powered_by"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/text_size" />
+
+                <TextView
+                    android:id="@+id/tv_developer_website"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/normal_margin"
+                    android:paddingEnd="@dimen/normal_margin"
+                    android:paddingBottom="@dimen/normal_margin"
+                    android:text="www.kayali-developer.com"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="@dimen/title_text_size" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/normal_margin"
+                    android:paddingEnd="@dimen/normal_margin"
+                    android:paddingBottom="@dimen/normal_margin"
+                    android:text="@string/about_us_text"
+                    android:textSize="@dimen/title_text_size" />
+
+            </LinearLayout>
+
+        </ScrollView>
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/icons_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/small_margin"
+        android:background="@drawable/field_background"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/mini_margin"
+        android:paddingBottom="@dimen/mini_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/iv_facebook"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="@dimen/small_margin"
+            android:layout_marginEnd="@dimen/small_margin"
+            android:src="@drawable/ic_facebook"
+            android:tint="@color/colorPrimary" />
+
+        <ImageView
+            android:id="@+id/iv_facebook2"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="@dimen/small_margin"
+            android:src="@drawable/ic_facebook"
+            android:tint="@color/colorPrimary" />
+
+        <ImageView
+            android:id="@+id/iv_youtube"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="@dimen/small_margin"
+            android:src="@drawable/ic_youtube"
+            android:tint="@color/colorPrimary" />
+
+        <ImageView
+            android:id="@+id/iv_twitter"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="@dimen/small_margin"
+            android:src="@drawable/ic_twitter"
+            android:tint="@color/colorPrimary" />
+
+        <ImageView
+            android:id="@+id/iv_instagram"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="@dimen/small_margin"
+            android:src="@drawable/ic_instagram"
+            android:tint="@color/colorPrimary" />
+
+        <ImageView
+            android:id="@+id/iv_google_play"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="@dimen/small_margin"
+            android:src="@drawable/ic_google_play"
+            android:tint="@color/colorPrimary" />
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

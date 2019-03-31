@@ -64,7 +64,7 @@ public class MainActivity
     private ItemsFragment mPlayListItemsFragment;
     private PrivacyPolicyFragment mPrivacyPolicyFragment;
 
-    MenuItem backMenuItem;
+    public MenuItem backMenuItem;
     MenuItem deleteMenuItem;
     public Toolbar mToolbar;
     public NavigationView mNavigationView;
@@ -195,7 +195,7 @@ public class MainActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer =  findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else if ((mChangeThemeFragment == null || !mChangeThemeFragment.isAdded()) &&
@@ -211,7 +211,6 @@ public class MainActivity
                         }
                     };
             showAppClosingConfirmDialog(discardButtonClickListener, getString(R.string.close_app_warning), getString(R.string.close), getString(R.string.back));
-
         } else {
             super.onBackPressed();
         }
@@ -367,6 +366,10 @@ public class MainActivity
     }
 
     private void initializeMainFragment(int tabIndex) {
+        if (backMenuItem != null){
+            backMenuItem.setVisible(false);
+        }
+        setTitle(getString(R.string.app_name));
         mViewModel.lastSelectedTabInMainFragment = tabIndex;
         mMainFragment = MainFragment.newInstance();
         mFragmentManager.beginTransaction().replace(R.id.main_fragment_container, mMainFragment, MainFragment.TAG).commitAllowingStateLoss();
@@ -478,27 +481,37 @@ public class MainActivity
         switch (mViewModel.lastFragmentTag) {
 
             case ChangeThemeFragment.TAG:
-                if (mChangeThemeFragment != null){
+                if (mChangeThemeFragment != null) {
                     mFragmentManager.beginTransaction().replace(R.id.main_fragment_container, mChangeThemeFragment, ChangeThemeFragment.TAG).commitAllowingStateLoss();
 
-                }                break;
+                }
+                break;
 
             case PrivacyPolicyFragment.TAG:
-                if (mPrivacyPolicyFragment != null){
+                if (mPrivacyPolicyFragment != null) {
                     mFragmentManager.beginTransaction().replace(R.id.main_fragment_container, mPrivacyPolicyFragment, PrivacyPolicyFragment.TAG).commitAllowingStateLoss();
 
-                }                break;
+                }
+                break;
 
             case HomePageFragment.TAG:
-                if (mHomePageFragment != null){
+                if (mHomePageFragment != null) {
                     mFragmentManager.beginTransaction().replace(R.id.main_fragment_container, mHomePageFragment, HomePageFragment.TAG).commitAllowingStateLoss();
 
-                }                break;
+                }
+                break;
 
             default:
-                if (mMainFragment != null){
-                    mFragmentManager.beginTransaction().replace(R.id.main_fragment_container, mMainFragment, MainFragment.TAG).commitAllowingStateLoss();
+                if (mMainFragment != null) {
+                    mFragmentManager.beginTransaction().replace(R.id.main_fragment_container, mMainFragment, MainFragment.TAG).commitNowAllowingStateLoss();
+                    setTitle(getString(R.string.app_name));
 
+                    if (mViewModel.lastFragmentTag.equals(ItemsFragment.PLAY_LIST_ITEMS_FRAGMENT_TAG) && mPlayListItemsFragment != null){
+                        mFragmentManager.beginTransaction().add(R.id.main_fragment_container, mPlayListItemsFragment, ItemsFragment.PLAY_LIST_ITEMS_FRAGMENT_TAG).addToBackStack(null).commitAllowingStateLoss();
+                        if (backMenuItem != null){
+                            backMenuItem.setVisible(true);
+                        }
+                    }
                 }
                 break;
         }
@@ -518,7 +531,8 @@ public class MainActivity
         backMenuItem = menu.findItem(R.id.action_back);
         if ((mChangeThemeFragment != null && mChangeThemeFragment.isAdded() ||
                 mPrivacyPolicyFragment != null && mPrivacyPolicyFragment.isAdded() ||
-                mHomePageFragment != null && mHomePageFragment.isAdded())){
+                mPlayListItemsFragment != null && mPlayListItemsFragment.isAdded() ||
+                mHomePageFragment != null && mHomePageFragment.isAdded())) {
             backMenuItem.setVisible(true);
         }
         deleteMenuItem = menu.findItem(R.id.action_delete);
