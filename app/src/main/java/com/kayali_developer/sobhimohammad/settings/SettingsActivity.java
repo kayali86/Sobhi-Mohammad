@@ -10,7 +10,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.kayali_developer.sobhimohammad.R;
@@ -92,78 +91,69 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-        swDarkMode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Prefs.setDarkModeStatus(mContext, isChecked);
-            }
-        });
+        swDarkMode.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> Prefs.setDarkModeStatus(mContext, isChecked));
 
-        swNewVideosNotification.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    FirebaseMessaging.getInstance().subscribeToTopic(getString(R.string.new_video_topic))
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (!task.isSuccessful()) {
-                                        showToastMessage(getString(R.string.subscription_error));
-                                    } else {
-                                        Prefs.setNewVideosNotificationStatus(mContext, true);
-                                        showToastMessage(getString(R.string.subscribed));
-                                    }
-                                }
-                            });
-                } else {
-                    FirebaseMessaging.getInstance().unsubscribeFromTopic(getString(R.string.new_video_topic))
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (!task.isSuccessful()) {
-                                        showToastMessage(getString(R.string.unsubscription_error));
-                                    } else {
-                                        Prefs.setNewVideosNotificationStatus(mContext, false);
-                                        showToastMessage(getString(R.string.unsubscribed));
-                                    }
-                                }
-                            });
-                }
-            }
-        });
+        swNewVideosNotification.setOnCheckedChangeListener(this::onNewVideosNotificationSwitchCheckedChanged);
 
-        swGeneralNotification.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    FirebaseMessaging.getInstance().subscribeToTopic(getString(R.string.general_topic))
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (!task.isSuccessful()) {
-                                        showToastMessage(getString(R.string.subscription_error));
-                                    } else {
-                                        Prefs.setGeneralNotificationStatus(mContext, true);
-                                        showToastMessage(getString(R.string.subscribed));
-                                    }
-                                }
-                            });
-                } else {
-                    FirebaseMessaging.getInstance().unsubscribeFromTopic(getString(R.string.general_topic))
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (!task.isSuccessful()) {
-                                        showToastMessage(getString(R.string.unsubscription_error));
-                                    } else {
-                                        Prefs.setNewVideosNotificationStatus(mContext, false);
-                                        showToastMessage(getString(R.string.unsubscribed));
-                                    }
-                                }
-                            });
-                }
-            }
-        });
+        swGeneralNotification.setOnCheckedChangeListener(this::onGeneralNotificationSwitchCheckedChanged);
+
+    }
+
+    private void onNewVideosNotificationSwitchCheckedChanged(CompoundButton buttonView, boolean isChecked){
+        if (isChecked) {
+            FirebaseMessaging.getInstance().subscribeToTopic(getString(R.string.new_video_topic))
+                    .addOnCompleteListener(this::onNewVideosNotificationSubscribed);
+        } else {
+            FirebaseMessaging.getInstance().unsubscribeFromTopic(getString(R.string.new_video_topic))
+                    .addOnCompleteListener(this::onNewVideosNotificationUnsubscribed);
+        }
+    }
+
+    private void onNewVideosNotificationSubscribed(@NonNull Task<Void> task){
+        if (!task.isSuccessful()) {
+            showToastMessage(getString(R.string.subscription_error));
+        } else {
+            Prefs.setNewVideosNotificationStatus(mContext, true);
+            showToastMessage(getString(R.string.subscribed));
+        }
+    }
+
+
+    private void onNewVideosNotificationUnsubscribed(@NonNull Task<Void> task){
+        if (!task.isSuccessful()) {
+            showToastMessage(getString(R.string.unsubscription_error));
+        } else {
+            Prefs.setNewVideosNotificationStatus(mContext, false);
+            showToastMessage(getString(R.string.unsubscribed));
+        }
+    }
+
+    private void onGeneralNotificationSwitchCheckedChanged(CompoundButton buttonView, boolean isChecked){
+        if (isChecked) {
+            FirebaseMessaging.getInstance().subscribeToTopic(getString(R.string.general_topic))
+                    .addOnCompleteListener(this::onGeneralNotificationSubscribed);
+        } else {
+            FirebaseMessaging.getInstance().unsubscribeFromTopic(getString(R.string.general_topic))
+                    .addOnCompleteListener(this::onGeneralNotificationUnsubscribed);
+        }
+    }
+
+    private void onGeneralNotificationSubscribed(@NonNull Task<Void> task){
+        if (!task.isSuccessful()) {
+            showToastMessage(getString(R.string.subscription_error));
+        } else {
+            Prefs.setGeneralNotificationStatus(mContext, true);
+            showToastMessage(getString(R.string.subscribed));
+        }
+    }
+
+    private void onGeneralNotificationUnsubscribed(@NonNull Task<Void> task){
+        if (!task.isSuccessful()) {
+            showToastMessage(getString(R.string.unsubscription_error));
+        } else {
+            Prefs.setNewVideosNotificationStatus(mContext, false);
+            showToastMessage(getString(R.string.unsubscribed));
+        }
     }
 
     private void showToastMessage(String message) {

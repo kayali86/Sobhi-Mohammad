@@ -14,6 +14,9 @@
 
 
     <string name="cannot_load_play_lists">Cannot load Play Lists!</string>
+    <string name="cannot_load_new_videos">Cannot load new Videos!</string>
+    <string name="cannot_load_play_list_videos">Cannot load Play List Videos!</string>
+    <string name="cannot_load_description">Cannot load description!</string>
     <string name="loading">Loading...</string>
 
     <string name="published_at">Published at:</string>
@@ -29,7 +32,7 @@
     <string name="general_topic">general</string>
 
 
-    <string name="privacy_policy_title">سياسة الخصوصية</string>
+    <string name="privacy_policy_title">Privacy policy</string>
 
     <string name="privacy_policy_text">
 
@@ -48,7 +51,7 @@
     <string name="back">Back</string>
     <string name="deletion_success">Deletion success!</string>
     <string name="deletion_failed">Deletion failed!</string>
-    <string name="remove_from_favorites_warning">Do you want to remove this items from Favorites?</string>
+    <string name="remove_from_favorites_warning">Do you want to remove this videos from Favorites?</string>
     <string name="remove">Remove</string>
     <string name="cancel">Cancel</string>
     <string name="saved">Saved</string>
@@ -93,5 +96,7 @@
     <string name="rate_app">Rate App</string>
     <string name="share_app">Share App</string>
     <string name="about_us">About Us</string>
+
+    <string name="new_videos_list_count">Count of new videos:</string>
 
 </resources>

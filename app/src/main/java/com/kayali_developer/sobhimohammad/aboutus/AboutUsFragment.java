@@ -77,7 +77,7 @@ public class AboutUsFragment extends Fragment {
     }
 
     @OnClick({R.id.tv_developer_website, R.id.iv_facebook, R.id.iv_facebook2, R.id.iv_youtube, R.id.iv_twitter, R.id.iv_instagram, R.id.iv_google_play})
-    public void onViewClicked(View view) {
+    void onViewClicked(View view) {
         switch (view.getId()) {
 
             case R.id.tv_developer_website:
@@ -106,7 +106,9 @@ public class AboutUsFragment extends Fragment {
                 break;
 
             case R.id.iv_google_play:
-                openWebSite("https://play.google.com/store/apps/details?id=com.app.sobhimohammad");
+                if (getContext() != null){
+                    openWebSite("http://play.google.com/store/apps/details?id=" + getContext().getPackageName());
+                }
                 break;
         }
     }

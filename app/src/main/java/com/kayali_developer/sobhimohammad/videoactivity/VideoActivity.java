@@ -16,8 +16,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.kayali_developer.sobhimohammad.AppConstants;
 import com.kayali_developer.sobhimohammad.R;
-import com.kayali_developer.sobhimohammad.data.model.PlayListItemsResponse;
-import com.kayali_developer.sobhimohammad.data.model.VideoStatisticsResponse;
+import com.kayali_developer.sobhimohammad.data.model.Video;
 import com.kayali_developer.sobhimohammad.utilities.MyTextUtils;
 import com.kayali_developer.sobhimohammad.utilities.Prefs;
 import com.kayali_developer.sobhimohammad.utilities.ThemeUtils;
@@ -32,7 +31,6 @@ import butterknife.OnClick;
 public class VideoActivity extends AppCompatActivity implements YouTubePlayer.OnInitializedListener {
 
     public static final String ITEM_KEY = "item_key";
-    public static final String VIDEO_STATISTICS_KEY = "video_statistics_key";
     private static final int RECOVERY_DIALOG_REQUEST = 1;
 
     @BindView(R.id.tv_view_count)
@@ -91,7 +89,7 @@ public class VideoActivity extends AppCompatActivity implements YouTubePlayer.On
         if (getIntent() != null) {
             if (getIntent().getStringExtra(ITEM_KEY) != null) {
                 try {
-                    mViewModel.setCurrentItem(new Gson().fromJson(getIntent().getStringExtra(ITEM_KEY), PlayListItemsResponse.Item.class));
+                    mViewModel.setCurrentItem(new Gson().fromJson(getIntent().getStringExtra(ITEM_KEY), Video.class));
                 } catch (JsonSyntaxException e) {
                     e.printStackTrace();
                 }
@@ -105,36 +103,29 @@ public class VideoActivity extends AppCompatActivity implements YouTubePlayer.On
                     if (mViewModel.getCurrentItem().getSnippet().getDescription() != null) {
                         tvItemDescription.setText(mViewModel.getCurrentItem().getSnippet().getDescription());
                     }
-                    Prefs.addToViewedItems(this, mViewModel.getCurrentItem().getId());
-                }
-            }
+                    Prefs.addToViewedItems(this, mViewModel.getCurrentItem().getId().getVideoId());
 
-            if (getIntent().getStringExtra(VIDEO_STATISTICS_KEY) != null) {
-                try {
-                    mViewModel.setItemStatistics(new Gson().fromJson(getIntent().getStringExtra(VIDEO_STATISTICS_KEY), VideoStatisticsResponse.class));
-                } catch (JsonSyntaxException e) {
-                    e.printStackTrace();
-                }
+                    if (mViewModel.getCurrentItem().getStatistics() != null) {
+                        if (mViewModel.getCurrentItem().getStatistics().getViewCount() != null) {
+                            String viewCount = mViewModel.getCurrentItem().getStatistics().getViewCount();
+                            tvViewCount.setText(MyTextUtils.formatViewsCount(viewCount));
+                        }
+                        if (mViewModel.getCurrentItem().getStatistics().getLikeCount() != null) {
+                            String likeCount = mViewModel.getCurrentItem().getStatistics().getLikeCount();
+                            tvLikes.setText(MyTextUtils.formatViewsCount(likeCount));
+                        }
+                        if (mViewModel.getCurrentItem().getStatistics().getDislikeCount() != null) {
+                            String dislikeCount = mViewModel.getCurrentItem().getStatistics().getDislikeCount();
+                            tvDislikes.setText(MyTextUtils.formatViewsCount(dislikeCount));
+                        }
+                    }
 
-                if (mViewModel.getItemStatistics() != null) {
-                    if (mViewModel.getItemStatistics().getItems().get(0).getStatistics().getViewCount() != null) {
-                        String viewCount = mViewModel.getItemStatistics().getItems().get(0).getStatistics().getViewCount();
-                        tvViewCount.setText(MyTextUtils.formatViewsCount(viewCount));
-                    }
-                    if (mViewModel.getItemStatistics().getItems().get(0).getStatistics().getLikeCount() != null) {
-                        String likeCount = mViewModel.getItemStatistics().getItems().get(0).getStatistics().getLikeCount();
-                        tvLikes.setText(MyTextUtils.formatViewsCount(likeCount));
-                    }
-                    if (mViewModel.getItemStatistics().getItems().get(0).getStatistics().getDislikeCount() != null) {
-                        String dislikeCount = mViewModel.getItemStatistics().getItems().get(0).getStatistics().getDislikeCount();
-                        tvDislikes.setText(MyTextUtils.formatViewsCount(dislikeCount));
-                    }
                 }
             }
 
             if (mViewModel.getCurrentItem() != null) {
 
-                if (mViewModel.isFavorite(mViewModel.getCurrentItem().getId())) {
+                if (mViewModel.isFavorite(mViewModel.getCurrentItem().getId().getVideoId())) {
                     ivFavorite.setImageResource(R.drawable.ic_heart);
                 } else {
                     ivFavorite.setImageResource(R.drawable.ic_heart_outline);
@@ -168,7 +159,7 @@ public class VideoActivity extends AppCompatActivity implements YouTubePlayer.On
     @Override
     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
         if (!b) {
-            youTubePlayer.cueVideo(mViewModel.getCurrentItem().getSnippet().getResourceId().getVideoId());
+            youTubePlayer.cueVideo(mViewModel.getCurrentItem().getId().getVideoId());
         }
     }
 
@@ -183,9 +174,9 @@ public class VideoActivity extends AppCompatActivity implements YouTubePlayer.On
     }
 
     private void removeAddToFavorites() {
-        if (mViewModel.isFavorite(mViewModel.getCurrentItem().getId())) {
+        if (mViewModel.isFavorite(mViewModel.getCurrentItem().getId().getVideoId())) {
             ivFavorite.setImageResource(R.drawable.ic_heart_outline);
-            boolean success = mViewModel.removeFromFavorites(mViewModel.getCurrentItem().getId());
+            boolean success = mViewModel.removeFromFavorites(mViewModel.getCurrentItem().getId().getVideoId());
             if (success) {
                 showToastMessage(getString(R.string.removed_from_favorites));
             } else {
@@ -206,7 +197,7 @@ public class VideoActivity extends AppCompatActivity implements YouTubePlayer.On
     private void shareVideo() {
         Intent sharingIntent = new Intent(Intent.ACTION_SEND);
         sharingIntent.setType("text/plain");
-        String shareBody = "https://www.youtube.com/watch?v=" + mViewModel.getCurrentItem().getSnippet().getResourceId().getVideoId();
+        String shareBody = "https://www.youtube.com/watch?v=" + mViewModel.getCurrentItem().getId().getVideoId();
         sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
         startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_via)));
     }

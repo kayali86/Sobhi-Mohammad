@@ -61,7 +61,7 @@ public class DeveloperFragment extends Fragment {
     }
 
     @OnClick({R.id.tv_developer_website, R.id.tv_developer_email, R.id.tv_used_libraries})
-    public void onViewClicked(View view) {
+    void onViewClicked(View view) {
         switch (view.getId()) {
 
             case R.id.tv_developer_website:

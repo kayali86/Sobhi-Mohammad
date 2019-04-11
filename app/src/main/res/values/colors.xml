@@ -13,7 +13,7 @@
     <color name="darkTextColor">#212121</color>
     <color name="gray_textColor">#424242</color>
 
-    <color name="loaderBackgroundColor">#70000000</color>
+    <color name="loaderBackgroundColor">#80000000</color>
 
     <color name="redColorPrimary">#d50000</color>
     <color name="redColorPrimaryDark">#9b0000</color>

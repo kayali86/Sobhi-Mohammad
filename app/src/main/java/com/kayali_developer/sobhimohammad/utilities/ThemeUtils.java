@@ -1,6 +1,7 @@
 package com.kayali_developer.sobhimohammad.utilities;
 
 import android.content.Context;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 
 import com.kayali_developer.sobhimohammad.R;
@@ -117,5 +118,13 @@ public class ThemeUtils {
                 return ContextCompat.getDrawable(context, R.drawable.cyrcle_gradient);
 
         }
+    }
+
+    public static Drawable getAppropriateTabIcon(Context context, int drawableId) {
+        Drawable drawable = ContextCompat.getDrawable(context, drawableId);
+        if (drawable != null){
+            drawable.setColorFilter(getThemePrimaryColor(context), PorterDuff.Mode.SRC_IN);
+        }
+        return drawable;
     }
 }

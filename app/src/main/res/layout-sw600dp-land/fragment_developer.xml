@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout android:background="@color/backgroundColor"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/iv_developer_image"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:scaleType="fitXY"
+        android:src="@drawable/kayali_developer"
+        android:layout_width="520dp"
+        android:layout_height="0dp" />
+
+    <TextView
+        android:id="@+id/tv_developer_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/iv_developer_image"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textStyle="bold"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/normal_margin"
+        android:paddingEnd="@dimen/normal_margin"
+        android:paddingTop="@dimen/normal_margin"
+        android:text="ABDULKADIR KAYALI"
+        android:textSize="@dimen/title_text_size" />
+
+    <TextView
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/iv_developer_image"
+        app:layout_constraintTop_toBottomOf="@+id/tv_developer_name"
+        android:id="@+id/tv_developer_email"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/normal_margin"
+        android:paddingEnd="@dimen/normal_margin"
+        android:paddingTop="@dimen/normal_margin"
+        android:text="kayali.developer@gmail.com"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="@dimen/title_text_size" />
+
+    <TextView
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/iv_developer_image"
+        app:layout_constraintTop_toBottomOf="@+id/tv_developer_email"
+        android:id="@+id/tv_developer_website"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/normal_margin"
+        android:paddingEnd="@dimen/normal_margin"
+        android:paddingTop="@dimen/normal_margin"
+        android:text="www.kayali-developer.com"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="@dimen/title_text_size" />
+
+    <TextView
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/iv_developer_image"
+        app:layout_constraintTop_toBottomOf="@+id/tv_developer_website"
+        android:id="@+id/tv_used_libraries"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/normal_margin"
+        android:paddingEnd="@dimen/normal_margin"
+        android:paddingTop="@dimen/normal_margin"
+        android:text="@string/used_libraries"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="@dimen/title_text_size" />
+</androidx.constraintlayout.widget.ConstraintLayout>

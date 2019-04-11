@@ -6,12 +6,16 @@ import android.widget.Toast;
 import com.kayali_developer.sobhimohammad.AppConstants;
 import com.kayali_developer.sobhimohammad.R;
 import com.kayali_developer.sobhimohammad.data.AppDatabase;
+import com.kayali_developer.sobhimohammad.data.model.PlayList;
+import com.kayali_developer.sobhimohammad.data.model.PlayListItem;
 import com.kayali_developer.sobhimohammad.data.model.PlayListItemsResponse;
 import com.kayali_developer.sobhimohammad.data.model.PlayListsResponse;
+import com.kayali_developer.sobhimohammad.data.model.Video;
+import com.kayali_developer.sobhimohammad.data.model.VideoDescriptionResponse;
 import com.kayali_developer.sobhimohammad.data.model.VideoStatisticsResponse;
+import com.kayali_developer.sobhimohammad.data.model.getNewVideosResponse;
 import com.kayali_developer.sobhimohammad.data.remote.APIService;
 import com.kayali_developer.sobhimohammad.data.remote.ApiUtils;
-import com.kayali_developer.sobhimohammad.mainfragment.MainFragment;
 import com.kayali_developer.sobhimohammad.utilities.AppDateUtils;
 import com.kayali_developer.sobhimohammad.utilities.Prefs;
 import com.kayali_developer.sobhimohammad.utilities.SingleEventMutableLive;
@@ -29,69 +33,116 @@ import retrofit2.Response;
 
 public class MainViewModel extends AndroidViewModel {
 
-    private static final String PART_SNIPPET = "snippet";
+    static final String PART_SNIPPET = "snippet";
     private static final String PART_STATISTIC = "statistics";
     private static final String ORDER = "date";
     private static final int MAX_RESULTS = 50;
 
-    public int lastSelectedTabInMainFragment = 0;
-    String lastFragmentTag = MainFragment.TAG;
+    private static final String FIELDS_GET_ALL_VIDEOS = "items(id(playlistId%2CvideoId)%2Csnippet(description%2CpublishedAt%2Cthumbnails%2Fhigh%2Ctitle))%2CnextPageToken";
+    private static final String FIELDS_GET_PLAY_LISTS = "items(id%2Csnippet(description%2CpublishedAt%2Cthumbnails%2Fhigh%2Ctitle))%2CnextPageToken";
+    private static final String FIELDS_GET_PLAY_LIST_ITEMS = "items(snippet(description%2CpublishedAt%2CresourceId(playlistId%2CvideoId)%2Cthumbnails%2Fhigh%2Ctitle))%2CnextPageToken";
+    private static final String FIELDS_GET_VIDEO_STATISTICS = "items(statistics(dislikeCount%2ClikeCount%2CviewCount))";
+    static final String FIELDS_GET_VIDEO_DESCRIPTION = "items%2Fsnippet%2Fdescription";
+
+    private int newVideosToLoadCount;
+
+    private String nextPageToken = null;
+    private String nextPageTokenPlayListItems = null;
+    private String nextPageTokenPlayLists = null;
+
+    private String lastPlayListId = null;
 
     private AppDatabase mDb;
     private APIService mService;
 
-    private PlayListItemsResponse.Item mCurrentItem = null;
-    private SingleEventMutableLive<VideoStatisticsResponse> mCurrentItemStatisticsLive = new SingleEventMutableLive<>();
+    private Video mCurrentVideo = null;
+    private SingleEventMutableLive<VideoStatisticsResponse> mCurrentItemStatisticsLive;
+    private SingleEventMutableLive<String> mCurrentItemDescriptionLive;
 
-    private MutableLiveData<List<PlayListsResponse.Item>> mAllPlayListsLive;
-    private SingleEventMutableLive<List<PlayListItemsResponse.Item>> mNewVideosLive;
-    private MutableLiveData<List<PlayListItemsResponse.Item>> mFavoritesItemsLive;
+    private MutableLiveData<List<PlayList>> mAllPlayListsLive;
+    private SingleEventMutableLive<List<Video>> mNewVideosLive;
+    private SingleEventMutableLive<List<PlayListItem>> mPlayListItemsLive;
+    private MutableLiveData<List<Video>> mFavoritesItemsLive;
 
-    private List<PlayListItemsResponse.Item> mFavoritesItems;
-    private List<PlayListItemsResponse.Item> mNewVideos;
-    private List<PlayListItemsResponse.Item> mAllVideos;
-    private List<PlayListsResponse.Item> mAllPlayLists;
+    private List<Video> mFavoritesVideos;
+    private List<Video> mNewVideos;
+    private List<PlayListItem> mPlayListItems;
+    private List<PlayList> mAllPlayLists;
 
-    List<PlayListItemsResponse.Item> itemsToDelete = new ArrayList<>();
+    List<Video> itemsToDelete = new ArrayList<>();
 
     public MainViewModel(@NonNull Application application) {
         super(application);
         mDb = AppDatabase.getInstance(application);
         mAllPlayListsLive = new MutableLiveData<>();
         mNewVideosLive = new SingleEventMutableLive<>();
+        mPlayListItemsLive = new SingleEventMutableLive<>();
         mFavoritesItemsLive = new MutableLiveData<>();
         mFavoritesItemsLive.postValue(mDb.videoDao().loadAllFavoriteVideos());
 
-        mAllVideos = new ArrayList<>();
+        mCurrentItemStatisticsLive = new SingleEventMutableLive<>();
+        mCurrentItemDescriptionLive = new SingleEventMutableLive<>();
+
         mNewVideos = new ArrayList<>();
+        mPlayListItems = new ArrayList<>();
         mAllPlayLists = new ArrayList<>();
 
         mService = ApiUtils.getAPIService();
 
-        loadAndUpdateAllVideosNewVideosAllPlayLists();
+        newVideosToLoadCount = Prefs.getNewVideosCount(getApplication());
+
+        loadNewVideos();
     }
 
-    private void loadAndUpdateAllVideosNewVideosAllPlayLists() {
-        mService.getPlaylists(PART_SNIPPET, AppConstants.YOUTUBE_CHANNEL_ID, MAX_RESULTS, AppConstants.YOUTUBE_DATA_V3_API_KEY).enqueue(new Callback<PlayListsResponse>() {
+    private void loadNewVideos() {
+        if (newVideosToLoadCount > MAX_RESULTS){
+            newVideosToLoadCount = MAX_RESULTS;
+        }
+        mService.getAllVideos(PART_SNIPPET, AppConstants.YOUTUBE_CHANNEL_ID, FIELDS_GET_ALL_VIDEOS, newVideosToLoadCount,
+                ORDER,
+                AppConstants.YOUTUBE_DATA_V3_API_KEY,
+                nextPageToken
+        ).enqueue(new Callback<getNewVideosResponse>() {
+            @Override
+            public void onResponse(Call<getNewVideosResponse> call, Response<getNewVideosResponse> response) {
+                if (response.body() != null) {
+                    nextPageToken = response.body().getNextPageToken();
+                    if (response.body().getVideos() != null) {
+                        mNewVideos.addAll(response.body().getVideos());
+                        newVideosToLoadCount = Prefs.getNewVideosCount(getApplication()) - mNewVideos.size();
+                    }
+
+                    if (nextPageToken == null || newVideosToLoadCount <= 0) {
+                        mNewVideosLive.postValue(getLastVideos(Prefs.getNewVideosCount(getApplication()), mNewVideos));
+                    } else {
+                        loadNewVideos();
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<getNewVideosResponse> call, Throwable t) {
+                showToastMessage(getApplication().getString(R.string.cannot_load_new_videos));
+            }
+        });
+    }
+
+    void loadAllPlayLists() {
+        mService.getPlayLists(PART_SNIPPET, AppConstants.YOUTUBE_CHANNEL_ID, MAX_RESULTS, FIELDS_GET_PLAY_LISTS, nextPageTokenPlayLists, AppConstants.YOUTUBE_DATA_V3_API_KEY).enqueue(new Callback<PlayListsResponse>() {
             @Override
             public void onResponse(Call<PlayListsResponse> call, Response<PlayListsResponse> response) {
                 if (response.body() != null) {
-                    mAllPlayLists = response.body().getItems();
-                    for (PlayListsResponse.Item playList : mAllPlayLists) {
-                        mService.getPlaylistItems(PART_SNIPPET, playList.getId(), MAX_RESULTS, ORDER, AppConstants.YOUTUBE_DATA_V3_API_KEY).enqueue(new Callback<PlayListItemsResponse>() {
-                            @Override
-                            public void onResponse(Call<PlayListItemsResponse> call, Response<PlayListItemsResponse> response) {
-                                if (response.body() != null) {
-                                    mAllVideos.addAll(response.body().getItems());
-                                    mNewVideosLive.postValue(getLastVideos(Prefs.getNewVideosCount(getApplication()), mAllVideos));
-                                }
-                            }
+                    nextPageTokenPlayLists = response.body().getNextPageToken();
 
-                            @Override
-                            public void onFailure(Call<PlayListItemsResponse> call, Throwable t) {
-                                showToastMessage(getApplication().getString(R.string.cannot_load_play_lists));
-                            }
-                        });
+                    if (response.body().getItems() != null) {
+                        mAllPlayLists.addAll(response.body().getItems());
+                    }
+
+                    if (nextPageTokenPlayLists == null) {
+                        mAllPlayListsLive.postValue(mAllPlayLists);
+                    } else {
+                        loadAllPlayLists();
                     }
                 }
             }
@@ -103,11 +154,69 @@ public class MainViewModel extends AndroidViewModel {
         });
     }
 
-    private List<PlayListItemsResponse.Item> getLastVideos(int newVideosCount, List<PlayListItemsResponse.Item> allVideos) {
+    void loadPlayListVideos(String playListId) {
+        mService.getPlaylistItems(
+                PART_SNIPPET,
+                playListId,
+                MAX_RESULTS,
+                FIELDS_GET_PLAY_LIST_ITEMS,
+                nextPageTokenPlayListItems,
+                AppConstants.YOUTUBE_DATA_V3_API_KEY
+                ).enqueue(new Callback<PlayListItemsResponse>() {
+            @Override
+            public void onResponse(Call<PlayListItemsResponse> call, Response<PlayListItemsResponse> response) {
+                if (response.body() != null) {
+                    nextPageTokenPlayListItems = response.body().getNextPageToken();
+                    lastPlayListId = playListId;
+
+                    if (response.body().getItems() != null) {
+                        mPlayListItems.addAll(response.body().getItems());
+                    }
+
+                    if (nextPageTokenPlayListItems == null) {
+                        mPlayListItemsLive.postValue(mPlayListItems);
+                    } else {
+                        loadPlayListVideos(playListId);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PlayListItemsResponse> call, Throwable t) {
+                showToastMessage(getApplication().getString(R.string.cannot_load_play_list_videos));
+            }
+        });
+
+    }
+
+    void loadVideoDescription(String videoId){
+        mService.getVideoDescription(
+                PART_SNIPPET,
+                videoId,
+                FIELDS_GET_VIDEO_DESCRIPTION,
+                AppConstants.YOUTUBE_DATA_V3_API_KEY
+        ).enqueue(new Callback<VideoDescriptionResponse>() {
+            @Override
+            public void onResponse(Call<VideoDescriptionResponse> call, Response<VideoDescriptionResponse> response) {
+                if (response.body() != null && response.body().getItems() != null && response.body().getItems().size() > 0
+                &&response.body().getItems().get(0).getSnippet() != null ) {
+                    mCurrentItemDescriptionLive.postValue(response.body().getItems().get(0).getSnippet().getDescription());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<VideoDescriptionResponse> call, Throwable t) {
+                showToastMessage(getApplication().getString(R.string.cannot_load_description));
+            }
+        });
+    }
+
+
+    private List<Video> getLastVideos(int newVideosCount, List<Video> allVideos) {
         if (allVideos != null && allVideos.size() > 0) {
-            List<PlayListItemsResponse.Item> allVideosTemp = new ArrayList<>();
+            List<Video> allVideosTemp = new ArrayList<>();
             allVideosTemp.addAll(allVideos);
-            List<PlayListItemsResponse.Item> lastVideos = new ArrayList<>();
+            List<Video> lastVideos = new ArrayList<>();
             List<Long> allVideosDateAsLong = new ArrayList<>();
             for (int i = 0; i < allVideosTemp.size(); i++) {
                 allVideosDateAsLong.add(AppDateUtils.youtubeFormatToMillis(allVideosTemp.get(i).getSnippet().getPublishedAt()));
@@ -133,29 +242,20 @@ public class MainViewModel extends AndroidViewModel {
     }
 
 
-    List<PlayListItemsResponse.Item> getPlaylistItems(String playListId){
-        List<PlayListItemsResponse.Item> playlistItems = new ArrayList<>();
-        for (PlayListItemsResponse.Item item : mAllVideos){
-            if (item.getSnippet().getPlaylistId().equals(playListId)){
-                playlistItems.add(item);
-            }
-        }
-        return playlistItems;
-    }
 
-    String getPlaylistTitle(String playListId){
+    String getPlaylistTitle(String playListId) {
         String title = null;
-        for (PlayListsResponse.Item playlist : mAllPlayLists){
-            if (playlist.getId().equals(playListId)){
+        for (PlayList playlist : mAllPlayLists) {
+            if (playlist.getId().equals(playListId)) {
                 title = playlist.getSnippet().getTitle();
             }
         }
         return title;
     }
 
-    void requestVideoStatistics(String videoId){
+    void requestVideoStatistics(String videoId) {
         final APIService mService = ApiUtils.getAPIService();
-        mService.getVideoStatistics(PART_STATISTIC, videoId, AppConstants.YOUTUBE_DATA_V3_API_KEY).enqueue(new Callback<VideoStatisticsResponse>() {
+        mService.getVideoStatistics(PART_STATISTIC, videoId, FIELDS_GET_VIDEO_STATISTICS, AppConstants.YOUTUBE_DATA_V3_API_KEY).enqueue(new Callback<VideoStatisticsResponse>() {
             @Override
             public void onResponse(Call<VideoStatisticsResponse> call, Response<VideoStatisticsResponse> response) {
                 mCurrentItemStatisticsLive.postValue(response.body());
@@ -168,7 +268,7 @@ public class MainViewModel extends AndroidViewModel {
         });
     }
 
-    public void updateFavoriteItems(){
+    void updateFavoriteItems() {
         mFavoritesItemsLive.setValue(mDb.videoDao().loadAllFavoriteVideos());
     }
 
@@ -178,8 +278,8 @@ public class MainViewModel extends AndroidViewModel {
     }
 
 
-    PlayListItemsResponse.Item getCurrentItem() {
-        return mCurrentItem;
+    Video getCurrentItem() {
+        return mCurrentVideo;
     }
 
     MutableLiveData<VideoStatisticsResponse> getCurrentItemStatisticsLive() {
@@ -187,58 +287,75 @@ public class MainViewModel extends AndroidViewModel {
     }
 
 
-    public MutableLiveData<List<PlayListsResponse.Item>> getAllPlayListsLive() {
+    MutableLiveData<List<PlayList>> getAllPlayListsLive() {
         return mAllPlayListsLive;
     }
 
-    MutableLiveData<List<PlayListItemsResponse.Item>> getNewVideosLive() {
+    MutableLiveData<List<Video>> getNewVideosLive() {
         return mNewVideosLive;
     }
 
-    public MutableLiveData<List<PlayListItemsResponse.Item>> getFavoritesItemsLive() {
+    MutableLiveData<List<Video>> getFavoritesItemsLive() {
         return mFavoritesItemsLive;
     }
 
-    public List<PlayListItemsResponse.Item> getFavoritesItems() {
-        return mFavoritesItems;
+    public List<Video> getFavoritesVideos() {
+        return mFavoritesVideos;
     }
 
-    public List<PlayListItemsResponse.Item> getNewVideos() {
+    List<Video> getNewVideos() {
         return mNewVideos;
     }
 
-    public List<PlayListItemsResponse.Item> getAllVideos() {
-        return mAllVideos;
-    }
 
-    public List<PlayListsResponse.Item> getAllPlayLists() {
+    List<PlayList> getAllPlayLists() {
         return mAllPlayLists;
     }
 
-    MutableLiveData<List<PlayListItemsResponse.Item>> getAllFavoritesItemsLive(){
+    void setAllPlayLists(List<PlayList> mAllPlayLists) {
+        this.mAllPlayLists = mAllPlayLists;
+    }
+
+    MutableLiveData<List<Video>> getAllFavoritesItemsLive() {
         return mFavoritesItemsLive;
     }
 
-    void setFavoritesItems(List<PlayListItemsResponse.Item> mFavoritesItems) {
-        this.mFavoritesItems = mFavoritesItems;
+    void setFavoritesItems(List<Video> mFavoritesVideos) {
+        this.mFavoritesVideos = mFavoritesVideos;
     }
 
-    boolean removeFavoriteItems(List<PlayListItemsResponse.Item> itemsToDelete){
+    boolean removeFavoriteItems(List<Video> itemsToDelete) {
         int deletedItemsCount = 0;
-        for (PlayListItemsResponse.Item item : itemsToDelete){
-            int count = mDb.videoDao().deleteVideoByItemId(item.getId());
-            if (count > 0){
-                deletedItemsCount ++;
+        for (Video video : itemsToDelete) {
+            int count = mDb.videoDao().deleteVideoByItemId(video.getId().getVideoId());
+            if (count > 0) {
+                deletedItemsCount++;
             }
         }
         return deletedItemsCount == itemsToDelete.size();
     }
 
-    void setNewVideos(List<PlayListItemsResponse.Item> mNewVideos) {
+    void setNewVideos(List<Video> mNewVideos) {
         this.mNewVideos = mNewVideos;
     }
 
-    void setCurrentItem(PlayListItemsResponse.Item mCurrentItem) {
-        this.mCurrentItem = mCurrentItem;
+    void setCurrentItem(Video mCurrentVideo) {
+        this.mCurrentVideo = mCurrentVideo;
+    }
+
+    SingleEventMutableLive<List<PlayListItem>> getPlayListItemsLive() {
+        return mPlayListItemsLive;
+    }
+
+    String getLastPlayListId() {
+        return lastPlayListId;
+    }
+
+    SingleEventMutableLive<String> getCurrentItemDescriptionLive() {
+        return mCurrentItemDescriptionLive;
+    }
+
+    List<PlayListItem> getPlayListItems() {
+        return mPlayListItems;
     }
 }

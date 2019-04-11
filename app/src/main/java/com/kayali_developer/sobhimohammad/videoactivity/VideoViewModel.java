@@ -3,16 +3,14 @@ package com.kayali_developer.sobhimohammad.videoactivity;
 import android.app.Application;
 
 import com.kayali_developer.sobhimohammad.data.AppDatabase;
-import com.kayali_developer.sobhimohammad.data.model.PlayListItemsResponse;
-import com.kayali_developer.sobhimohammad.data.model.VideoStatisticsResponse;
+import com.kayali_developer.sobhimohammad.data.model.Video;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 
 public class VideoViewModel extends AndroidViewModel {
 
-    private PlayListItemsResponse.Item mCurrentItem = null;
-    private VideoStatisticsResponse mItemStatistics = null;
+    private Video mCurrentVideo = null;
 
     private AppDatabase mDb;
 
@@ -25,8 +23,9 @@ public class VideoViewModel extends AndroidViewModel {
         return mDb.videoDao().isFavorite(itemId);
     }
 
-    boolean addToFavorites(PlayListItemsResponse.Item currentItem) {
-        long addedVideosCount = mDb.videoDao().insertVideo(currentItem);
+    boolean addToFavorites(Video currentVideo) {
+        currentVideo.setLocalVideoId(currentVideo.getId().getVideoId());
+        long addedVideosCount = mDb.videoDao().insertVideo(currentVideo);
         return addedVideosCount > 0;
     }
 
@@ -35,21 +34,12 @@ public class VideoViewModel extends AndroidViewModel {
         return removedVideosCount > 0;
     }
 
-    PlayListItemsResponse.Item getCurrentItem() {
-        return mCurrentItem;
+    Video getCurrentItem() {
+        return mCurrentVideo;
     }
 
-    void setCurrentItem(PlayListItemsResponse.Item mCurrentItem) {
-        this.mCurrentItem = mCurrentItem;
+    void setCurrentItem(Video mCurrentVideo) {
+        this.mCurrentVideo = mCurrentVideo;
     }
-
-    VideoStatisticsResponse getItemStatistics() {
-        return mItemStatistics;
-    }
-
-    void setItemStatistics(VideoStatisticsResponse mItemStatistics) {
-        this.mItemStatistics = mItemStatistics;
-    }
-
 
 }

@@ -23,7 +23,7 @@ public class Prefs {
 
     public static int getNewVideosCount(Context context) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return sharedPreferences.getInt("newVideosCount", 50);
+        return sharedPreferences.getInt("newVideosCount", 20);
     }
 
     public static void addToViewedItems(Context context, String viewedItemId) {
@@ -61,6 +61,20 @@ public class Prefs {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         return sharedPreferences.getBoolean("darkMode", false);
     }
+
+
+    public static void setNewVideoNotificationInitialized(Context context, boolean status) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("newVideoNotificationInitialization", status);
+        editor.apply();
+    }
+
+    public static boolean getNewVideoNotificationInitializedStatus(Context context) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPreferences.getBoolean("newVideoNotificationInitialization", false);
+    }
+
 
 
     public static void setNewVideosNotificationStatus(Context context, boolean status) {

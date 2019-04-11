@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="about_us">Über uns</string>
+    <string name="about_us_title">Über uns</string>
+    <string name="action_settings">Einstellungen</string>
+    <string name="added_to_favorites">In die Favoriten hinzugefügt</string>
+    <string name="adding_error">Das Video konnte nicht in die Favoriten hinzugefügt werden</string>
+    <string name="app_name">Sobhi Mohammad</string>
+    <string name="back">Zurück</string>
+    <string name="blue">blau</string>
+    <string name="brown">braun</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="cannot_load_play_lists">Wiedergabelisten konnten nicht geladen!</string>
+    <string name="cannot_load_new_videos">Neue Videos konnten nicht geladen!</string>
+    <string name="cannot_load_play_list_videos">Videos konnten nicht geladen!</string>
+    <string name="cannot_load_description">Video-Beschreibung konnte nicht geladen!</string>
+    <string name="change_theme_title">Farben</string>
+    <string name="close">Schließen</string>
+    <string name="close_app_warning">Möchten Sie die App schließen?</string>
+    <string name="communicate">Kommunizieren</string>
+    <string name="dark_mode">Dunkler Modus</string>
+    <string name="deletion_failed">Die Videos konnten nicht gelöscht werden!</string>
+    <string name="deletion_success">Gelöcht</string>
+    <string name="enter_valid_number">Geben Sie eine Nummer ein!</string>
+    <string name="favorite">Favoriten</string>
+    <string name="favorite_videos">Beliebte Videos</string>
+    <string name="favorites">Favoriten</string>
+    <string name="general_notifications">Allgemeine Benachrichtungen</string>
+    <string name="green">grün</string>
+    <string name="loading">LADEN..</string>
+    <string name="nav_header_subtitle">www.sobhimohammad.com</string>
+    <string name="nav_header_title">Sobhi Mohammad</string>
+    <string name="navigation_drawer_close">Navication drawer ausblinden</string>
+    <string name="navigation_drawer_open">Navigation drawer einblinden</string>
+    <string name="new_videos">Neue Videos</string>
+    <string name="new_videos_notifications">Neue Videos banachrichtungen</string>
+    <string name="no_items">Keine gespeicherte Videos</string>
+    <string name="not_now">Nicht jetzt</string>
+    <string name="notification_settings">Benachrichtungen-Einstellungen:</string>
+    <string name="play_lists">Wiedergabelisten</string>
+    <string name="powered_by">Programmiert von:</string>
+    <string name="privacy_policy">Datenschutz</string>
+    <string name="privacy_policy_fragment_title">Datenschutz</string>
+    <string name="published_at">Veröffentlicht am:</string>
+    <string name="purple">lila</string>
+    <string name="rate_app">App bewerten</string>
+    <string name="red">rot</string>
+    <string name="remove">Löschen</string>
+    <string name="remove_from_favorites_warning">Möchten Sie diese Videos von Favoriten löschen?</string>
+    <string name="removed_from_favorites">Gelöcht von Favoriten</string>
+    <string name="removing_error">Das Video konnte nicht gelöscht werden</string>
+    <string name="restart">Neustarten</string>
+    <string name="restart_app_warning">Die App soll neugestartet werden</string>
+    <string name="saved">Gespeichert</string>
+    <string name="settings">Einstellungen</string>
+    <string name="share">Teilen</string>
+    <string name="share_app">App teilen</string>
+    <string name="share_via">Teilen</string>
+    <string name="sobhi_mohammad_translatable">Sobhi Mohammad</string>
+    <string name="subscribed">Die Benachrinchtungen wurden abboniert</string>
+    <string name="subscription_error">Die Benachrichtungen konnten nicht abboniert werden!</string>
+    <string name="theme">Farben</string>
+    <string name="title_fragment_favorites_videos">Favoriten</string>
+    <string name="title_fragment_new_videos">Neu</string>
+    <string name="title_fragment_play_lists">Listen</string>
+    <string name="unsubscribed">Die Benachrichtungen wurden abgemeldet</string>
+    <string name="unsubscription_error">Die Benachrichtungen konnten nicht abgemeldet werden</string>
+    <string name="used_libraries">Benutzte Bibliotheken</string>
+    <string name="version">Beta Version</string>
+    <string name="web_site_title">Website</string>
+    <string name="website">Website</string>
+    <string name="yellow">gelb</string>
+
+    <string name="new_videos_list_count">Neue videos Anzahl:</string>
+
+    <string name="privacy_policy_title">Datenschutz</string>
+    <string name="about_us_text">عازف وملحن موسيقي وموزع-التطبيق الرسمي
+الكاتب جان فريسكور – بيروت هو من القلائل الذين يبتعدون عن الناس و يتنسّكون داخل الاستديو لينتشلوا من داخلهم كنوز ملوّنة باجمل الالحان و الكلمات , هو مايسترو يسافر بك الى عالم الخيال بانامله الذهبية التي قدّمت للكثير من النجوم اروع الالحان , بيروت تفتخر به كما وبلده سوريا يعشق فنّه و يتمنى ان يقّدم الاكثر , اغنى المكتبة الموسيقية في الوطن العربي بألحان اصبحت خالدة لان نسبة الاستماع اليها فاقت المعقول , هو الملحن و الموزع صبحي محمد الذي كنا في ضيافته داخل الاستديو الخاص به في لبنان</string>
+
+</resources>

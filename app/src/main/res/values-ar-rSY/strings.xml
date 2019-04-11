@@ -11,6 +11,9 @@
     <string name="privacy_policy_fragment_title">سياسة الخصوصية</string>
     <string name="web_site_title">الموقع الالكتروني</string>
     <string name="cannot_load_play_lists">لا يمكن تحميل قوائم التشغيل</string>
+    <string name="cannot_load_new_videos">لا يمكن تحميل مقاطع الفيديو الجديدة</string>
+    <string name="cannot_load_play_list_videos">لا يمكن تحميل مقاطع الفيديو لقائمة التشغيل هذه</string>
+    <string name="cannot_load_description">لا يمكن تحميل وصف هذا الفيديو</string>
     <string name="loading">جاري التحميل..</string>
     <string name="published_at">تاريخ النشر:</string>
     <string name="title_fragment_new_videos">جديد</string>
@@ -32,7 +35,7 @@
     <string name="subscription_error">فشل الاشتراك في التنبيهات</string>
     <string name="subscribed">تم الاشتراك بالتنبيهات بنجاح</string>
     <string name="unsubscription_error">فشل إلغاء الاشتراك في التنبيهات</string>
-    <string name="unsubscribed">تم إالغاء الاشتراك بالتنبيهات</string>
+    <string name="unsubscribed">تم إلغاء الاشتراك بالتنبيهات</string>
     <string name="removed_from_favorites">تم الحذف من المفضلة</string>
     <string name="removing_error">فشل الحذف من المفضلة</string>
     <string name="added_to_favorites">تم الإضافة إلى المفضلة</string>
@@ -67,4 +70,9 @@
     <string name="rate_app">تقييم التطبيق</string>
     <string name="share_app">مشاركة التطبيق</string>
     <string name="about_us">من نحن</string>
+    <string name="privacy_policy_title">سياسة الخصوصية</string>
+    <string name="new_videos_list_count">عدد مقاطع الفيديو الجديدة في القائمة:</string>
+    <string name="about_us_text">عازف وملحن موسيقي وموزع-التطبيق الرسمي
+الكاتب جان فريسكور – بيروت هو من القلائل الذين يبتعدون عن الناس و يتنسّكون داخل الاستديو لينتشلوا من داخلهم كنوز ملوّنة باجمل الالحان و الكلمات , هو مايسترو يسافر بك الى عالم الخيال بانامله الذهبية التي قدّمت للكثير من النجوم اروع الالحان , بيروت تفتخر به كما وبلده سوريا يعشق فنّه و يتمنى ان يقّدم الاكثر , اغنى المكتبة الموسيقية في الوطن العربي بألحان اصبحت خالدة لان نسبة الاستماع اليها فاقت المعقول , هو الملحن و الموزع صبحي محمد الذي كنا في ضيافته داخل الاستديو الخاص به في لبنان</string>
+
 </resources>

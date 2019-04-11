@@ -3,29 +3,35 @@ package com.kayali_developer.sobhimohammad.mainactivity;
 
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.kayali_developer.sobhimohammad.LoadingFragment;
 import com.kayali_developer.sobhimohammad.R;
 import com.kayali_developer.sobhimohammad.aboutus.AboutUsActivity;
-import com.kayali_developer.sobhimohammad.data.model.PlayListItemsResponse;
+import com.kayali_developer.sobhimohammad.data.model.PlayList;
+import com.kayali_developer.sobhimohammad.data.model.PlayListItem;
+import com.kayali_developer.sobhimohammad.data.model.Video;
 import com.kayali_developer.sobhimohammad.data.model.VideoStatisticsResponse;
-import com.kayali_developer.sobhimohammad.mainfragment.FavoriteVideosFragment;
-import com.kayali_developer.sobhimohammad.mainfragment.ItemsFragment;
-import com.kayali_developer.sobhimohammad.mainfragment.MainFragment;
-import com.kayali_developer.sobhimohammad.mainfragment.NewVideosFragment;
-import com.kayali_developer.sobhimohammad.mainfragment.PlayListsFragment;
 import com.kayali_developer.sobhimohammad.settings.SettingsActivity;
+import com.kayali_developer.sobhimohammad.utilities.Prefs;
+import com.kayali_developer.sobhimohammad.utilities.ThemeUtils;
 import com.kayali_developer.sobhimohammad.videoactivity.VideoActivity;
 
 import java.util.List;
@@ -37,31 +43,34 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.viewpager.widget.ViewPager;
+import butterknife.BindView;
 import butterknife.ButterKnife;
-import timber.log.Timber;
 
 public class MainActivity
 
         extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         PlayListsFragment.PlayListsFragmentListener,
-        ItemsFragment.ItemsFragmentListener,
-        MainFragment.MainFragmentListener,
+        PlayListItemsFragment.ItemsFragmentListener,
         FavoriteVideosFragment.FavoriteVideosFragmentListener,
         ChangeThemeFragment.ChangeThemeFragmentListener,
         HomePageFragment.HomePageFragmentListener,
         PrivacyPolicyFragment.PrivacyPolicyFragmentListener,
         NewVideosFragment.NewVideosFragmentListener {
 
+    @BindView(R.id.main_tab_layout)
+    TabLayout mainTabLayout;
+    @BindView(R.id.main_view_pager)
+    ViewPager mainViewPager;
+    private Context mContext;
     public MainViewModel mViewModel;
     public FragmentManager mFragmentManager;
     private LoadingFragment mLoadingFragment;
     private HomePageFragment mHomePageFragment;
     private ChangeThemeFragment mChangeThemeFragment;
-    public MainFragment mMainFragment;
-    private ItemsFragment mPlayListItemsFragment;
+    private PlayListItemsFragment mPlayListItemsFragment;
     private PrivacyPolicyFragment mPrivacyPolicyFragment;
 
     public MenuItem backMenuItem;
@@ -70,12 +79,14 @@ public class MainActivity
     public NavigationView mNavigationView;
     public DrawerLayout mDrawer;
 
+    private MainViewPagerAdapter viewPagerAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        Timber.plant(new Timber.DebugTree());
+        mContext = this;
         mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
@@ -86,55 +97,160 @@ public class MainActivity
         toggle.syncState();
 
         mNavigationView = findViewById(R.id.nav_view);
-        mNavigationView.setNavigationItemSelectedListener(this::onNavigationItemSelected);
+        mNavigationView.setNavigationItemSelectedListener(this);
         mFragmentManager = getSupportFragmentManager();
 
         if (savedInstanceState == null) {
+            if (!Prefs.getNewVideoNotificationInitializedStatus(mContext)) {
+                FirebaseMessaging.getInstance().subscribeToTopic(getString(R.string.new_video_topic))
+                        .addOnCompleteListener((this::onSubscribedToNewVideoTopic));
+            }
+
             initializeLoadingFragment(getString(R.string.loading));
         }
+
+        viewPagerAdapter = new MainViewPagerAdapter(mContext, mFragmentManager);
+        mainViewPager.setAdapter(viewPagerAdapter);
+        mainTabLayout.setupWithViewPager(mainViewPager);
+        setTabsStyle();
+
         findAllFragments();
         mViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         observeVariables();
+        if (mainViewPager != null && (mViewModel.getAllPlayLists() == null || mViewModel.getAllPlayLists().size() <= 0)) {
+            mainViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                }
+
+                @Override
+                public void onPageSelected(int position) {
+                    if (position == MainViewPagerAdapter.PLAY_LISTS_FRAGMENT_INDEX &&
+                            (mViewModel.getAllPlayLists() == null || mViewModel.getAllPlayLists().size() <= 0)) {
+                        initializeLoadingFragment(getString(R.string.loading));
+                        mViewModel.loadAllPlayLists();
+                    }
+                    if (position == MainViewPagerAdapter.FAVORITE_VIDEOS_FRAGMENT_INDEX){
+                        mViewModel.updateFavoriteItems();
+                    }
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int state) {
+
+                }
+            });
+        }
 
     }
 
+    private void onSubscribedToNewVideoTopic(Task<Void> task) {
+        if (!task.isSuccessful()) {
+            showToastMessage(getString(R.string.subscription_error));
+        } else {
+            Prefs.setNewVideoNotificationInitialized(mContext, true);
+            Prefs.setNewVideosNotificationStatus(mContext, true);
+        }
+    }
+
+    private void setTabsStyle() {
+        for (int i = 0; i < mainTabLayout.getTabCount(); i++) {
+            try {
+                View v = LayoutInflater.from(mContext).inflate(R.layout.custom_tab, null);
+                TextView tv = v.findViewById(android.R.id.text1);
+                tv.setTextColor(ThemeUtils.getThemePrimaryColor(mContext));
+                mainTabLayout.getTabAt(i).setCustomView(v);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        setTabsIcons(mainTabLayout);
+    }
+
+    private void setTabsIcons(TabLayout tabLayout) {
+        try {
+            tabLayout.getTabAt(0).setIcon(ThemeUtils.getAppropriateTabIcon(mContext, R.drawable.ic_new_icon_purple));
+            tabLayout.getTabAt(1).setIcon(ThemeUtils.getAppropriateTabIcon(mContext, R.drawable.ic_playlist_purple));
+            tabLayout.getTabAt(2).setIcon(ThemeUtils.getAppropriateTabIcon(mContext, R.drawable.ic_heart_purple));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void onNewVideosLiveChanged(List<Video> videos) {
+        mViewModel.setNewVideos(videos);
+        if (mFragmentManager != null && mLoadingFragment != null) {
+            mFragmentManager.beginTransaction().remove(mLoadingFragment).commitAllowingStateLoss();
+        }
+
+        if (videos != null && videos.size() > 0 && viewPagerAdapter.getNewVideosFragment() != null) {
+            viewPagerAdapter.getNewVideosFragment().populateVideos(videos);
+            mainViewPager.getAdapter().notifyDataSetChanged();
+            setTabsStyle();
+        }
+    }
+
+    private void onVideosStatisticsResponseChanged(VideoStatisticsResponse videoStatisticsResponse) {
+        if (videoStatisticsResponse != null && videoStatisticsResponse.getItems() != null &&
+                videoStatisticsResponse.getItems().size() > 0 && videoStatisticsResponse.getItems().get(0) != null &&
+                videoStatisticsResponse.getItems().get(0).getStatistics() != null
+        ) {
+            mFragmentManager.beginTransaction().remove(mLoadingFragment).commitAllowingStateLoss();
+            Video currentVideo = mViewModel.getCurrentItem();
+            currentVideo.setStatistics(videoStatisticsResponse.getItems().get(0).getStatistics());
+            startVideoActivity(currentVideo);
+        }
+    }
+
+    private void onVideoDescriptionResponseChanged(String description){
+        Video video = mViewModel.getCurrentItem();
+        Video.Snippet snippet = mViewModel.getCurrentItem().getSnippet();
+        snippet.setDescription(description);
+        video.setSnippet(snippet);
+        mViewModel.setCurrentItem(video);
+        mViewModel.requestVideoStatistics(mViewModel.getCurrentItem().getId().getVideoId());
+    }
+
+    private void onAllPlayListsLiveChanged(List<PlayList> playLists) {
+        mViewModel.setAllPlayLists(playLists);
+        if (mFragmentManager != null && mLoadingFragment != null) {
+            mFragmentManager.beginTransaction().remove(mLoadingFragment).commitAllowingStateLoss();
+        }
+
+        if (playLists != null && playLists.size() > 0 && viewPagerAdapter.getNewVideosFragment() != null) {
+            viewPagerAdapter.getPlayListsFragment().populatePlayLists(playLists);
+            mainViewPager.getAdapter().notifyDataSetChanged();
+            setTabsStyle();
+        }
+    }
+
+    private void onPlayListItemsLiveChanged(List<PlayListItem> playListItems) {
+        if (mFragmentManager != null && mLoadingFragment != null) {
+            mFragmentManager.beginTransaction().remove(mLoadingFragment).commitAllowingStateLoss();
+        }
+        if (playListItems != null && playListItems.size() > 0 && mViewModel.getLastPlayListId() != null) {
+            initializePlayListItemsFragment(playListItems, mViewModel.getPlaylistTitle(mViewModel.getLastPlayListId()));
+        }
+    }
 
     private void observeVariables() {
-        mViewModel.getNewVideosLive().observe(this, new Observer<List<PlayListItemsResponse.Item>>() {
-            @Override
-            public void onChanged(List<PlayListItemsResponse.Item> items) {
-                mViewModel.setNewVideos(items);
-                if (items != null && items.size() > 0) {
-                    initializeMainFragment(mViewModel.lastSelectedTabInMainFragment);
-                }
-            }
-        });
+        mViewModel.getNewVideosLive().observe(this, this::onNewVideosLiveChanged);
 
-        mViewModel.getAllFavoritesItemsLive().observe(this, new Observer<List<PlayListItemsResponse.Item>>() {
-            @Override
-            public void onChanged(List<PlayListItemsResponse.Item> items) {
-                mViewModel.setFavoritesItems(items);
-            }
-        });
+        mViewModel.getAllFavoritesItemsLive().observe(this, (List<Video> videos) -> mViewModel.setFavoritesItems(videos));
+        mViewModel.getCurrentItemDescriptionLive().observe(this, this::onVideoDescriptionResponseChanged);
+        mViewModel.getCurrentItemStatisticsLive().observe(this, this::onVideosStatisticsResponseChanged);
 
-        mViewModel.getCurrentItemStatisticsLive().observe(this, new Observer<VideoStatisticsResponse>() {
-            @Override
-            public void onChanged(VideoStatisticsResponse videoStatisticsResponse) {
-                if (videoStatisticsResponse != null && videoStatisticsResponse.getItems() != null &&
-                        videoStatisticsResponse.getItems().size() > 0 && videoStatisticsResponse.getItems().get(0) != null &&
-                        videoStatisticsResponse.getItems().get(0).getStatistics() != null
-                ) {
-                    mFragmentManager.beginTransaction().remove(mLoadingFragment).commitAllowingStateLoss();
-                    startVideoActivity(videoStatisticsResponse);
-                }
-            }
-        });
+        mViewModel.getAllPlayListsLive().observe(this, this::onAllPlayListsLiveChanged);
+        mViewModel.getPlayListItemsLive().observe(this, this::onPlayListItemsLiveChanged);
     }
 
-    private void startVideoActivity(VideoStatisticsResponse videoStatisticsResponse) {
+    private void startVideoActivity(Video video) {
         Intent videoIntent = new Intent(MainActivity.this, VideoActivity.class);
-        videoIntent.putExtra(VideoActivity.ITEM_KEY, new Gson().toJson(mViewModel.getCurrentItem()));
-        videoIntent.putExtra(VideoActivity.VIDEO_STATISTICS_KEY, new Gson().toJson(videoStatisticsResponse));
+        videoIntent.putExtra(VideoActivity.ITEM_KEY, new Gson().toJson(video));
         startActivity(videoIntent);
     }
 
@@ -143,9 +259,6 @@ public class MainActivity
         for (Fragment fragment : mFragmentManager.getFragments()) {
             if (fragment != null && fragment.getTag() != null) {
                 switch (fragment.getTag()) {
-                    case MainFragment.TAG:
-                        mMainFragment = (MainFragment) mFragmentManager.findFragmentByTag(MainFragment.TAG);
-                        break;
 
                     case HomePageFragment.TAG:
                         mHomePageFragment = (HomePageFragment) mFragmentManager.findFragmentByTag(HomePageFragment.TAG);
@@ -159,26 +272,9 @@ public class MainActivity
                         mLoadingFragment = (LoadingFragment) mFragmentManager.findFragmentByTag(LoadingFragment.TAG);
                         break;
 
-                    case ItemsFragment.PLAY_LIST_ITEMS_FRAGMENT_TAG:
-                        mPlayListItemsFragment = (ItemsFragment) mFragmentManager.findFragmentByTag(ItemsFragment.PLAY_LIST_ITEMS_FRAGMENT_TAG);
+                    case PlayListItemsFragment.PLAY_LIST_ITEMS_FRAGMENT_TAG:
+                        mPlayListItemsFragment = (PlayListItemsFragment) mFragmentManager.findFragmentByTag(PlayListItemsFragment.PLAY_LIST_ITEMS_FRAGMENT_TAG);
                         break;
-
-                    case PlayListsFragment.TAG:
-                        if (mMainFragment != null) {
-                            mMainFragment.mPlayListsFragment = (PlayListsFragment) mFragmentManager.findFragmentByTag(PlayListsFragment.TAG);
-                        }
-                        break;
-
-                    case FavoriteVideosFragment.TAG:
-                        if (mMainFragment != null) {
-                            mMainFragment.mFavoriteVideosFragment = (FavoriteVideosFragment) mFragmentManager.findFragmentByTag(FavoriteVideosFragment.TAG);
-                        }
-                        break;
-
-                    case NewVideosFragment.TAG:
-                        if (mMainFragment != null) {
-                            mMainFragment.mNewVideosFragment = (NewVideosFragment) mFragmentManager.findFragmentByTag(NewVideosFragment.TAG);
-                        }
 
                     case PrivacyPolicyFragment.TAG:
                         mPrivacyPolicyFragment = (PrivacyPolicyFragment) mFragmentManager.findFragmentByTag(PrivacyPolicyFragment.TAG);
@@ -189,8 +285,10 @@ public class MainActivity
     }
 
     @Override
-    public void onPlayListItemClicked(String playListId) {
-        initializePlayListItemsFragment(mViewModel.getPlaylistItems(playListId), mViewModel.getPlaylistTitle(playListId));
+    public void onPlayListClicked(String playListId) {
+        initializeLoadingFragment(getString(R.string.loading));
+        mViewModel.getPlayListItems().clear();
+        mViewModel.loadPlayListVideos(playListId);
     }
 
     @Override
@@ -198,20 +296,20 @@ public class MainActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else if ((mChangeThemeFragment == null || !mChangeThemeFragment.isAdded()) &&
+        }
+        else if (deleteMenuItem != null && deleteMenuItem.isVisible()) {
+            abortDeletion();
+        }
+        else if ((mChangeThemeFragment == null || !mChangeThemeFragment.isAdded()) &&
                 (mPrivacyPolicyFragment == null || !mPrivacyPolicyFragment.isAdded()) &&
                 (mPlayListItemsFragment == null || !mPlayListItemsFragment.isAdded()) &&
                 (mHomePageFragment == null || !mHomePageFragment.isAdded())) {
 
-            DialogInterface.OnClickListener discardButtonClickListener =
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            finishAffinity();
-                        }
-                    };
+            DialogInterface.OnClickListener discardButtonClickListener = (DialogInterface dialogInterface, int i) -> finishAffinity();
+
             showAppClosingConfirmDialog(discardButtonClickListener, getString(R.string.close_app_warning), getString(R.string.close), getString(R.string.back));
-        } else {
+        }
+        else {
             super.onBackPressed();
         }
     }
@@ -221,10 +319,10 @@ public class MainActivity
         if (deleteMenuItem.isVisible()) {
             deleteMenuItem.setVisible(false);
         }
-        if (mMainFragment != null && mMainFragment.mFavoriteVideosFragment != null && mMainFragment.mFavoriteVideosFragment.mAdapter != null) {
-            for (PlayListItemsResponse.Item item : mMainFragment.mFavoriteVideosFragment.mAdapter.getAllItems())
-                item.setSelected(false);
-            mMainFragment.mFavoriteVideosFragment.mAdapter.notifyDataSetChanged();
+        if (viewPagerAdapter != null && viewPagerAdapter.getFavoriteVideosFragment() != null && viewPagerAdapter.getFavoriteVideosFragment().mAdapter != null) {
+            for (Video video : viewPagerAdapter.getFavoriteVideosFragment().mAdapter.getAllItems())
+                video.setSelected(false);
+            viewPagerAdapter.getFavoriteVideosFragment().mAdapter.notifyDataSetChanged();
         }
     }
 
@@ -233,19 +331,19 @@ public class MainActivity
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(message);
         builder.setPositiveButton(positiveButtonCaption, deleteButtonClickListener);
-        builder.setNegativeButton(negativeButtonCaption, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                if (dialog != null) {
-                    if (mViewModel.itemsToDelete.size() > 0) {
-                        abortDeletion();
-                    }
-                    dialog.dismiss();
-                }
-            }
-        });
+        builder.setNegativeButton(negativeButtonCaption, this::onAbortDeletionButtonClicked);
         // Create and show the AlertDialog
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+
+    private void onAbortDeletionButtonClicked(DialogInterface dialog, int id) {
+        if (dialog != null) {
+            if (mViewModel.itemsToDelete.size() > 0) {
+                abortDeletion();
+            }
+            dialog.dismiss();
+        }
     }
 
     // Display an alert dialog
@@ -272,25 +370,16 @@ public class MainActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_new_videos) {
-            if (mMainFragment == null || !mMainFragment.isDetached()) {
-                initializeMainFragment(MainFragment.NEW_VIDEOS_TAB_INDEX);
-            } else {
-                mMainFragment.showNewVideosFragment();
-            }
+            clearAllSecondaryFragments();
+            mainViewPager.setCurrentItem(MainViewPagerAdapter.NEW_VIDEOS_FRAGMENT_INDEX);
 
         } else if (id == R.id.nav_play_lists) {
-            if (mMainFragment == null || !mMainFragment.isDetached()) {
-                initializeMainFragment(MainFragment.PLAY_LISTS_TAB_INDEX);
-            } else {
-                mMainFragment.showPlayListsFragment();
-            }
+            clearAllSecondaryFragments();
+            mainViewPager.setCurrentItem(MainViewPagerAdapter.PLAY_LISTS_FRAGMENT_INDEX);
 
         } else if (id == R.id.nav_favorites_videos) {
-            if (mMainFragment == null || !mMainFragment.isDetached()) {
-                initializeMainFragment(MainFragment.FAVORITE_VIDEOS_TAB_INDEX);
-            } else {
-                mMainFragment.showFavoritesVideosFragment();
-            }
+            clearAllSecondaryFragments();
+            mainViewPager.setCurrentItem(MainViewPagerAdapter.FAVORITE_VIDEOS_FRAGMENT_INDEX);
 
         } else if (id == R.id.nav_change_theme) {
             initializeChangeThemeFragment();
@@ -311,6 +400,23 @@ public class MainActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void clearAllSecondaryFragments(){
+        if (backMenuItem != null){
+            backMenuItem.setVisible(false);
+        }
+        setTitle(getString(R.string.app_name));
+        findAllFragments();
+        for (Fragment fragment : mFragmentManager.getFragments()){
+            if (fragment != null){
+                if (!(fragment instanceof NewVideosFragment) &&
+                        !(fragment instanceof PlayListsFragment) &&
+                        !(fragment instanceof FavoriteVideosFragment)){
+                    mFragmentManager.beginTransaction().remove(fragment).commitAllowingStateLoss();
+                }
+            }
+        }
     }
 
     private void showSettings() {
@@ -365,16 +471,6 @@ public class MainActivity
         mFragmentManager.beginTransaction().replace(R.id.main_fragment_container, mLoadingFragment, LoadingFragment.TAG).commitAllowingStateLoss();
     }
 
-    private void initializeMainFragment(int tabIndex) {
-        if (backMenuItem != null){
-            backMenuItem.setVisible(false);
-        }
-        setTitle(getString(R.string.app_name));
-        mViewModel.lastSelectedTabInMainFragment = tabIndex;
-        mMainFragment = MainFragment.newInstance();
-        mFragmentManager.beginTransaction().replace(R.id.main_fragment_container, mMainFragment, MainFragment.TAG).commitAllowingStateLoss();
-    }
-
     private void initializeHomePageFragment() {
         mHomePageFragment = new HomePageFragment();
         mFragmentManager.beginTransaction().replace(R.id.main_fragment_container, mHomePageFragment, HomePageFragment.TAG).addToBackStack(null).commitAllowingStateLoss();
@@ -383,50 +479,54 @@ public class MainActivity
     private void initializeChangeThemeFragment() {
         mChangeThemeFragment = new ChangeThemeFragment();
         mFragmentManager.beginTransaction().replace(R.id.main_fragment_container, mChangeThemeFragment, ChangeThemeFragment.TAG).addToBackStack(null).commitAllowingStateLoss();
-        mViewModel.lastFragmentTag = ChangeThemeFragment.TAG;
     }
 
     private void initializePrivacyPolicyFragment() {
         mPrivacyPolicyFragment = new PrivacyPolicyFragment();
         mFragmentManager.beginTransaction().replace(R.id.main_fragment_container, mPrivacyPolicyFragment, PrivacyPolicyFragment.TAG).addToBackStack(null).commitAllowingStateLoss();
-        mViewModel.lastFragmentTag = PrivacyPolicyFragment.TAG;
     }
 
-    private void initializePlayListItemsFragment(List<PlayListItemsResponse.Item> items, String listTitle) {
-        mPlayListItemsFragment = new ItemsFragment();
+    private void initializePlayListItemsFragment(List<PlayListItem> playListItems, String listTitle) {
+        mPlayListItemsFragment = new PlayListItemsFragment();
         Bundle bundle = new Bundle();
-        if (items != null && items.size() > 0) {
-            bundle.putString(ItemsFragment.PLAY_LIST_ITEMS_RESPONSE_KEY, new Gson().toJson(items));
+        if (playListItems != null && playListItems.size() > 0) {
+            bundle.putString(PlayListItemsFragment.PLAY_LIST_ITEMS_RESPONSE_KEY, new Gson().toJson(playListItems));
             mPlayListItemsFragment.setArguments(bundle);
         }
         if (listTitle != null) {
-            bundle.putString(ItemsFragment.PLAY_LIST_TITLE_KEY, listTitle);
+            bundle.putString(PlayListItemsFragment.PLAY_LIST_TITLE_KEY, listTitle);
         }
-        mFragmentManager.beginTransaction().add(R.id.main_fragment_container, mPlayListItemsFragment, ItemsFragment.PLAY_LIST_ITEMS_FRAGMENT_TAG).addToBackStack(null).commitAllowingStateLoss();
-        mViewModel.lastFragmentTag = ItemsFragment.PLAY_LIST_ITEMS_FRAGMENT_TAG;
+        mFragmentManager.beginTransaction().replace(R.id.main_fragment_container, mPlayListItemsFragment, PlayListItemsFragment.PLAY_LIST_ITEMS_FRAGMENT_TAG).addToBackStack(null).commitAllowingStateLoss();
     }
 
     @Override
-    public void onPlayListItemClicked(PlayListItemsResponse.Item item) {
+    public void onPlayListItemClicked(Video video) {
         initializeLoadingFragment(getString(R.string.loading));
-        mViewModel.setCurrentItem(item);
-        mViewModel.requestVideoStatistics(item.getSnippet().getResourceId().getVideoId());
+        mViewModel.setCurrentItem(video);
+        mViewModel.loadVideoDescription(video.getId().getVideoId());
     }
 
     @Override
-    public void onPlayListItemLongClicked(PlayListItemsResponse.Item item) {
+    public void onFavoriteVideoClicked(Video video) {
+        initializeLoadingFragment(getString(R.string.loading));
+        mViewModel.setCurrentItem(video);
+        mViewModel.loadVideoDescription(video.getId().getVideoId());
+    }
+
+    @Override
+    public void onFavoriteVideoLongClicked(Video video) {
         if (!deleteMenuItem.isVisible()) {
             deleteMenuItem.setVisible(true);
         }
-        if (item.getSelected()) {
-            mViewModel.itemsToDelete.remove(item);
-            item.setSelected(false);
+        if (video.isSelected()) {
+            mViewModel.itemsToDelete.remove(video);
+            video.setSelected(false);
         } else {
-            mViewModel.itemsToDelete.add(item);
-            item.setSelected(true);
+            mViewModel.itemsToDelete.add(video);
+            video.setSelected(true);
         }
 
-        mMainFragment.mFavoriteVideosFragment.mAdapter.notifyDataSetChanged();
+        viewPagerAdapter.getFavoriteVideosFragment().mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -451,70 +551,16 @@ public class MainActivity
         setTitle(getString(R.string.app_name));
     }
 
-
-    @Override
-    public void onNewVideosTabClicked() {
-        if (mMainFragment != null) {
-            mMainFragment.showNewVideosFragment();
-        }
-    }
-
-    @Override
-    public void onPlayListsTabClicked() {
-        if (mMainFragment != null) {
-            mMainFragment.showPlayListsFragment();
-        }
-    }
-
-    @Override
-    public void onFavoritesVideosTabClicked() {
-        if (mMainFragment != null) {
-            mViewModel.updateFavoriteItems();
-            mMainFragment.showFavoritesVideosFragment();
-        }
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
-        mViewModel.updateFavoriteItems();
-        switch (mViewModel.lastFragmentTag) {
-
-            case ChangeThemeFragment.TAG:
-                if (mChangeThemeFragment != null) {
-                    mFragmentManager.beginTransaction().replace(R.id.main_fragment_container, mChangeThemeFragment, ChangeThemeFragment.TAG).commitAllowingStateLoss();
-
-                }
-                break;
-
-            case PrivacyPolicyFragment.TAG:
-                if (mPrivacyPolicyFragment != null) {
-                    mFragmentManager.beginTransaction().replace(R.id.main_fragment_container, mPrivacyPolicyFragment, PrivacyPolicyFragment.TAG).commitAllowingStateLoss();
-
-                }
-                break;
-
-            case HomePageFragment.TAG:
-                if (mHomePageFragment != null) {
-                    mFragmentManager.beginTransaction().replace(R.id.main_fragment_container, mHomePageFragment, HomePageFragment.TAG).commitAllowingStateLoss();
-
-                }
-                break;
-
-            default:
-                if (mMainFragment != null) {
-                    mFragmentManager.beginTransaction().replace(R.id.main_fragment_container, mMainFragment, MainFragment.TAG).commitNowAllowingStateLoss();
-                    setTitle(getString(R.string.app_name));
-
-                    if (mViewModel.lastFragmentTag.equals(ItemsFragment.PLAY_LIST_ITEMS_FRAGMENT_TAG) && mPlayListItemsFragment != null){
-                        mFragmentManager.beginTransaction().add(R.id.main_fragment_container, mPlayListItemsFragment, ItemsFragment.PLAY_LIST_ITEMS_FRAGMENT_TAG).addToBackStack(null).commitAllowingStateLoss();
-                        if (backMenuItem != null){
-                            backMenuItem.setVisible(true);
-                        }
-                    }
-                }
-                break;
+        if (mPlayListItemsFragment != null){
+            mFragmentManager.beginTransaction().replace(R.id.main_fragment_container, mPlayListItemsFragment, PlayListItemsFragment.PLAY_LIST_ITEMS_FRAGMENT_TAG).commitAllowingStateLoss();
+            if (backMenuItem != null){
+                backMenuItem.setVisible(true);
+            }
         }
+        mViewModel.updateFavoriteItems();
     }
 
     @Override
@@ -556,27 +602,36 @@ public class MainActivity
                 break;
 
             case R.id.action_delete:
-                DialogInterface.OnClickListener discardButtonClickListener =
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                boolean success = mViewModel.removeFavoriteItems(mViewModel.itemsToDelete);
-                                mViewModel.updateFavoriteItems();
-                                if (success) {
-                                    if (mMainFragment != null && mMainFragment.mFavoriteVideosFragment != null && mMainFragment.mFavoriteVideosFragment.mAdapter != null) {
-                                        mMainFragment.mFavoriteVideosFragment.mAdapter.notifyDataSetChanged();
-                                    }
-                                    mViewModel.itemsToDelete.clear();
-                                    showToastMessage(getString(R.string.deletion_success));
-                                } else {
-                                    showToastMessage(getString(R.string.deletion_failed));
-                                }
-                            }
-                        };
+                DialogInterface.OnClickListener discardButtonClickListener = this::onDeleteItemClickedDialog;
+
                 showDeletionConfirmDialog(discardButtonClickListener, getString(R.string.remove_from_favorites_warning), getString(R.string.remove), getString(R.string.cancel));
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void onDeleteItemClickedDialog(DialogInterface dialogInterface, int i) {
+        boolean success = mViewModel.removeFavoriteItems(mViewModel.itemsToDelete);
+        mViewModel.updateFavoriteItems();
+        if (success) {
+            if (deleteMenuItem.isVisible()) {
+                deleteMenuItem.setVisible(false);
+            }
+            if (viewPagerAdapter != null && viewPagerAdapter.getFavoriteVideosFragment() != null && viewPagerAdapter.getFavoriteVideosFragment().mAdapter != null) {
+                viewPagerAdapter.getFavoriteVideosFragment().mAdapter.notifyDataSetChanged();
+            }
+            mViewModel.itemsToDelete.clear();
+            showToastMessage(getString(R.string.deletion_success));
+        } else {
+            if (deleteMenuItem.isVisible()) {
+                deleteMenuItem.setVisible(false);
+            }
+
+            mViewModel.itemsToDelete.clear();
+
+            viewPagerAdapter.getFavoriteVideosFragment().mAdapter.notifyDataSetChanged();
+            showToastMessage(getString(R.string.deletion_failed));
+        }
     }
 
     @Override
@@ -625,5 +680,12 @@ public class MainActivity
             backMenuItem.setVisible(false);
         }
         setTitle(getString(R.string.app_name));
+    }
+
+    @Override
+    public void onVideoClicked(Video video) {
+        initializeLoadingFragment(getString(R.string.loading));
+        mViewModel.setCurrentItem(video);
+        mViewModel.loadVideoDescription(video.getId().getVideoId());
     }
 }

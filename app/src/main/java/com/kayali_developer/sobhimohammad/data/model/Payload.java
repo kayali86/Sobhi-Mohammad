@@ -28,10 +28,6 @@ public class Payload {
         return title;
     }
 
-    public String getChannel_id() {
-        return channel_id;
-    }
-
     public String getUpdated() {
         return updated;
     }

@@ -80,7 +80,7 @@ public class ChangeThemeFragment extends Fragment {
 
 
     @OnClick({R.id.purple_theme, R.id.red_theme, R.id.yellow_theme, R.id.brown_theme, R.id.green_theme, R.id.blue_theme})
-    public void onViewClicked(View view) {
+    void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.purple_theme:
                 Prefs.setCurrentTheme(getContext(), Themes.PURPLE);
@@ -117,18 +117,16 @@ public class ChangeThemeFragment extends Fragment {
     }
 
     private void showRestartDialog(){
-        DialogInterface.OnClickListener positiveButtonClickListener =
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        if (getContext() != null){
-                            Intent restartIntent = new Intent(getActivity(), MainActivity.class);
-                            ProcessPhoenix.triggerRebirth(getContext(), restartIntent);
-                            ProcessPhoenix.triggerRebirth(getContext());
-                        }
-                    }
-                };
+        DialogInterface.OnClickListener positiveButtonClickListener = (this::onRestartAppButtonClicked);
         showConfirmDialog(positiveButtonClickListener, getString(R.string.restart_app_warning), getString(R.string.restart), getString(R.string.not_now));
+    }
+
+    private void onRestartAppButtonClicked(DialogInterface dialogInterface, int i) {
+        if (getContext() != null){
+            Intent restartIntent = new Intent(getActivity(), MainActivity.class);
+            ProcessPhoenix.triggerRebirth(getContext(), restartIntent);
+            ProcessPhoenix.triggerRebirth(getContext());
+        }
     }
 
     // Display an alert dialog
