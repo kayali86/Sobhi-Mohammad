@@ -1,0 +1,5 @@
+Callback URL
+https://kayali-net.000webhostapp.com/pubsubhubbub/sobhi_mohammad/youtube_subscribe_callback.php
+
+Topic URL
+https://www.youtube.com/xml/feeds/videos.xml?channel_id=UCEiwa5MRvm0mV85wpLTLUBw
