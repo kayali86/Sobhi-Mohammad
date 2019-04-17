@@ -3,7 +3,9 @@ package com.kayali_developer.sobhimohammad;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.AudioAttributes;
@@ -11,6 +13,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 
+import com.kayali_developer.sobhimohammad.mainactivity.MainActivity;
 import com.kayali_developer.sobhimohammad.utilities.AppDateUtils;
 
 import androidx.core.app.NotificationCompat;
@@ -22,10 +25,12 @@ class NotificationUtils {
     static void showNewVideoNotification(Context context, String video_id, String title, String author, String published, String updated, Bitmap largeIcon) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID_STR);
-        NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle();
-        bigTextStyle.setBigContentTitle(author);
-        bigTextStyle.bigText(title + "\n" + AppDateUtils.youtubeFormatToDeFormat(published));
-        builder.setStyle(bigTextStyle);
+
+        NotificationCompat.BigPictureStyle bigPictureStyle = new NotificationCompat.BigPictureStyle();
+        bigPictureStyle.bigPicture(largeIcon);
+        bigPictureStyle.setBigContentTitle(author);
+
+        builder.setStyle(bigPictureStyle);
         builder.setWhen(System.currentTimeMillis());
         builder.setSmallIcon(R.mipmap.ic_launcher);
         builder.setLargeIcon(largeIcon);
@@ -50,6 +55,18 @@ class NotificationUtils {
         } else {
             builder.setPriority(Notification.PRIORITY_MAX);
         }
+
+
+        Intent notificationIntent = new Intent(context, MainActivity.class);
+
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+        PendingIntent intent = PendingIntent.getActivity(context, 0,
+                notificationIntent, 0);
+
+        builder.setContentIntent(intent);
+
         Notification notification = builder.build();
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
         notificationManager.notify(NOTIFICATION_CHANNEL_ID_INT, notification);
